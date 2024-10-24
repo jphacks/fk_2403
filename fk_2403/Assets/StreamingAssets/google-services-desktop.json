@@ -1,0 +1,37 @@
+{
+  "project_info": {
+    "project_number": "640705606121",
+    "firebase_url": "https://fk2403-abeea-default-rtdb.firebaseio.com",
+    "project_id": "fk2403-abeea",
+    "storage_bucket": "fk2403-abeea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:640705606121:ios:abf3cd6f8a4be4593e1b78",
+        "android_client_info": {
+          "package_name": "com.godora.prof"
+        }
+      },
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaYGTsRL3Vfgiv3BSj1x2f_b_gvegPXE4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 0
+        },
+        "appinvite_service": {
+          "status": 1
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "640705606121-413qi5iogkvb4iuoh9k9ph64766v7s9r.apps.googleusercontent.com"
+        }
+      ]
+    }
+  ],
+  "configuration_version": "1"
+}

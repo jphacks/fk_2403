@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>640705606121-413qi5iogkvb4iuoh9k9ph64766v7s9r.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.640705606121-413qi5iogkvb4iuoh9k9ph64766v7s9r</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDaYGTsRL3Vfgiv3BSj1x2f_b_gvegPXE4</string>
+	<key>GCM_SENDER_ID</key>
+	<string>640705606121</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.godora.prof</string>
+	<key>PROJECT_ID</key>
+	<string>fk2403-abeea</string>
+	<key>STORAGE_BUCKET</key>
+	<string>fk2403-abeea.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:640705606121:ios:abf3cd6f8a4be4593e1b78</string>
+	<key>DATABASE_URL</key>
+	<string>https://fk2403-abeea-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>

@@ -79,20 +79,6 @@ public class FirebaseManager : MonoBehaviour
         action(result);
     }
 
-
-    // public void testa()
-    // {
-    //     WriteData("test/id/aaa", "teststr");
-    // }
-
-    // public void testb()
-    // {
-    //     ReadData("test/id/aaa", (value) =>
-    //     {
-    //         Debug.Log(value);
-    //     });
-    // }
-
     void OnDestroy()
     {
         // イベントの解除

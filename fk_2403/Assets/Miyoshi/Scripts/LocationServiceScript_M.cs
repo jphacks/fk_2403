@@ -3,23 +3,31 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LocationServiceScript_M : MonoBehaviour
 {
     [SerializeField] GameObject indicatorPrefab;//相手のポイント.
-    [SerializeField] Canvas targetCanvs;
+    [SerializeField] Canvas targetCanvas;
     [SerializeField] GameObject centerPosition;
     [SerializeField] GameObject tmp;
     //List<GameObject> indicators = new List<GameObject>();
 
+    //
+    [SerializeField] Text myTxt;
+    [SerializeField] Text opoTxt;
+    [SerializeField] Text disTxt;
+    //
+
     private float myLatitude;
     private float myLongitude;
-    private float opponentLatitude = 33.67372f;
-    private float opponentLongitude = 130.4411f;
+    private float opponentLatitude = 33.67147f;
+    private float opponentLongitude = 130.4468f;
+
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Assert(indicatorPrefab != null && targetCanvs != null && centerPosition != null);
+        Debug.Assert(indicatorPrefab != null && targetCanvas != null && centerPosition != null);
     }
 
     // Update is called once per frame
@@ -60,30 +68,6 @@ public class LocationServiceScript_M : MonoBehaviour
 
     public IEnumerator GetLocation()
     {
-        /*
-        //位置情報が拒否されていたら終了.
-        if (!Input.location.isEnabledByUser)
-            yield break;
-
-        //開始.
-        Input.location.Start();
-
-        //開始されるまでに少し時間がかかる,20秒までは待つ.
-        int maxWait = 20;
-        while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0)
-        {
-            yield return new WaitForSeconds(1);
-            maxWait--;
-        }
-
-        //タイムアウトの処理.
-        if (maxWait < 1)
-        {
-            print("Timed out");
-            yield break;
-        }
-        */
-
         if(!Scene5Manager_M.instance.isLocationServiceStart)
         {
             yield return new WaitForSeconds(.1f);
@@ -111,37 +95,24 @@ public class LocationServiceScript_M : MonoBehaviour
         return Mathf.Sqrt((latitude2-latitude1)*(latitude2-latitude1)+(longtitude2-longtitude1)*(longtitude2-longtitude1));
     }
 
-    /*
-    public void OnClickGetLocation()//自身座標と取ってくる.
-    {
-        StartCoroutine(GetLocation());
-    }
-    */
-
-    /*
-    public void OnClickDisplayDirections()
-    {
-        //合言葉が同じ人の中から検索.
-        //
-        //StartCoroutine(DisplayDirections(33.67335f, 130.4413f, 33.67372f, 130.4412f));
-    }
-    */
-
     public IEnumerator DisplayDirections(/*float myLatitude, float myLongitude, *//*float opponentLatitude, float opponentLongitude*/)
     {
         while(true)
         {
-            GetLocation();
+            StartCoroutine(GetLocation());
             //ここで相手の座標を取りたい.
             Vector3 targetPosition = CalculatePosition(opponentLatitude, opponentLongitude);
             Vector3 myPosition = CalculatePosition(myLatitude, myLongitude);
+            myTxt.GetComponent<Text>().text = "m:"+myLatitude+", "+myLongitude;
+            opoTxt.GetComponent<Text>().text = "o:"+opponentLatitude+", "+opponentLongitude;
             //Debug.Log(Mathf.Sqrt((targetPosition.x-myPosition.x)*(targetPosition.x-myPosition.x)+(targetPosition.y-myPosition.y)*(targetPosition.y-myPosition.y)));
+            Scene5Manager_M.instance.distance = Mathf.Sqrt((targetPosition.x-myPosition.x)*(targetPosition.x-myPosition.x)+(targetPosition.y-myPosition.y)*(targetPosition.y-myPosition.y));
+            disTxt.GetComponent<Text>().text = "d:"+Scene5Manager_M.instance.distance;
             Vector3 direction = (targetPosition - myPosition).normalized;
-            //Debug.Log(direction);
-            direction *= 2f;//mapのサイズに合わせて調整.
+            direction *= 1.5f;//mapのサイズに合わせて調整.
             Destroy(tmp);
             tmp = Instantiate(indicatorPrefab);
-            tmp.transform.SetParent(targetCanvs.transform, false);
+            tmp.transform.SetParent(targetCanvas.transform, false);
             tmp.transform.position = centerPosition.transform.position + direction;
             //indicators.Add(tmp);
             //tmp.transform.LookAt(targetPosition);

@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Miyoshi/Scenes/Scene5_M.unity
+    guid: f71544b4fce9a4a6c913a92eada9247a
+  - enabled: 1
     path: Assets/Scenes/Scene1.unity
     guid: 305eda020d8404ce69ad157bd81a0705
   - enabled: 1

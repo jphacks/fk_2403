@@ -8,7 +8,7 @@ public class TempAvatarStorage
     public string[] CostumePaths = {"Costumes/0/eye 1", "Costumes/1/kuti 1", "Costumes/2/brow 1", "Costumes/3/hear 1", "Costumes/4/banso-ko-"};
 
     public void SetUserData(){
-        //大元にデータを送る
+        UserDataManager.instance.SetAvatarDataToServer(CostumePaths);
     }
     
 }

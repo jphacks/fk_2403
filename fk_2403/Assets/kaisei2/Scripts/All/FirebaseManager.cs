@@ -46,15 +46,16 @@ public class FirebaseManager : MonoBehaviour
     }
 
     //データベースからデータを読み込む
-    // public string ReadTestData(string key)
-    // {
-    //     if (reader != null)
-    //     {
-    //         //string rtn = reader.ReadData(key);
-    //     }
+    public string ReadTestData(string key)
+    {
+        string rtn = "";
+        if (reader != null)
+        {
+            rtn = reader.ReadData(key);
+        }
 
-    //     //return rtn;
-    // }
+        return rtn;
+    }
 
     // サンプルデータを書き込む
     public void WriteSampleData()

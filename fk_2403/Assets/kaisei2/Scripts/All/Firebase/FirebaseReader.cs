@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class FirebaseReader : MonoBehaviour
 {
-    public void ReadData(string key)
+    public string ReadData(string key)
     {
+        string rtnStr = "error";
+
         if (FirebaseInitializer.DatabaseReference != null)
         {
             FirebaseInitializer.DatabaseReference.Child(key).GetValueAsync().ContinueWithOnMainThread(task =>
@@ -13,7 +15,8 @@ public class FirebaseReader : MonoBehaviour
                 if (task.IsCompleted)
                 {
                     DataSnapshot snapshot = task.Result;
-                    Debug.Log("読み込みデータ: " + key + " = " + snapshot.Value);
+                    rtnStr = "読み込みデータ: " + key + " = " + snapshot.Value;
+                    Debug.Log(rtnStr);
                 }
                 else
                 {
@@ -25,5 +28,7 @@ public class FirebaseReader : MonoBehaviour
         {
             Debug.LogError("Firebase Databaseの参照が初期化されていません");
         }
+
+        return rtnStr;
     }
 }

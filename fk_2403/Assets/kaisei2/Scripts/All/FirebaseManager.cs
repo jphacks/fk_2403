@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class FirebaseManager : MonoBehaviour
@@ -6,6 +7,15 @@ public class FirebaseManager : MonoBehaviour
     private FirebaseReader reader;
 
     private FirebaseInitializer initializer;
+    private bool IsReadWaiting = true;
+    private string ReadStr = "";
+    float time = 0f;
+    float interval = 0.5f;
+    private void Awake() 
+    {
+        // Firebaseの初期化完了イベントにリスナーを登録
+        FirebaseInitializer.OnFirebaseInitialized += CheckConnection;
+    }
 
     void Start()
     {
@@ -14,11 +24,25 @@ public class FirebaseManager : MonoBehaviour
         reader = GetComponent<FirebaseReader>();
         initializer = GetComponent<FirebaseInitializer>();
 
-        // Firebaseの初期化完了イベントにリスナーを登録
-        FirebaseInitializer.OnFirebaseInitialized += CheckConnection;
-
         //初期化
         initializer.InitializeFirebase();
+        
+    }
+
+    private void Update() {
+        // if(IsReadWaiting){
+        //     time += Time.deltaTime;
+        //     if(time >= interval)
+        //     {
+        //         time = 0;
+        //         if(reader.GetIsCompleted())
+        //         {
+        //             ReadStr = reader.GetReadStr();
+        //             IsReadWaiting = false;
+        //         }
+
+        //     }
+        // }
     }
 
     // Firebase接続確認（初期化完了時に呼ばれる）
@@ -27,9 +51,6 @@ public class FirebaseManager : MonoBehaviour
         if (FirebaseInitializer.DatabaseReference != null)
         {
             Debug.Log("Firebaseに接続済み");
-
-            // テストデータを書き込む
-            WriteSampleData();
         }
         else
         {
@@ -46,33 +67,22 @@ public class FirebaseManager : MonoBehaviour
     }
 
     //データベースからデータを読み込む
-    public string ReadTestData(string key)
+    public void ReadData(string key)
     {
-        string rtn = "";
-        if (reader != null)
-        {
-            rtn = reader.ReadData(key);
-        }
-
-        return rtn;
+        reader.ReadNestedData(key);
+        IsReadWaiting = true;
     }
 
-    // サンプルデータを書き込む
-    public void WriteSampleData()
+    public void testa()
     {
-        if (writer != null)
-        {
-            writer.WriteData("sample_data", "This is a test message from FirebaseManager!");
-        }
+        WriteData("test/id/aaa", "teststr");
     }
 
-    // データベースからデータを読み込み
-    public void ReadTestData()
+    public void testb()
     {
-        if (reader != null)
-        {
-            reader.ReadData("sample_data");
-        }
+        ReadData("test/id/aaa");
+        Debug.Log(reader.GetReadStr());
+
     }
 
     void OnDestroy()

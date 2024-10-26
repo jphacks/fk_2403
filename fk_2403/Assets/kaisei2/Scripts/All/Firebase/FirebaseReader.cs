@@ -2,26 +2,40 @@ using Firebase.Database;
 using Firebase.Extensions;
 using UnityEngine;
 using System.Text;
+using System;
 
 public class FirebaseReader : MonoBehaviour
 {
-    public string ReadData(string key)
+    bool IsCompleted = false;
+    string rtnStr = "";
+    public void ReadNestedData(string path)
     {
-        string rtnStr = "error";
+        IsCompleted = false;
 
         if (FirebaseInitializer.DatabaseReference != null)
         {
-            FirebaseInitializer.DatabaseReference.Child(key).GetValueAsync().ContinueWithOnMainThread(task =>
+            string[] keys = path.Split('/');
+            var reference = FirebaseInitializer.DatabaseReference;
+
+            // パスを分割して`Child`メソッドをチェーン
+            foreach (string key in keys)
+            {
+                Debug.Log(key);
+                reference = reference.Child(key);
+            }
+
+            reference.GetValueAsync().ContinueWithOnMainThread(task =>
             {
                 if (task.IsCompleted)
                 {
                     DataSnapshot snapshot = task.Result;
-                    rtnStr = "読み込みデータ: \n" + ParseSnapshot(snapshot);
-                    Debug.Log(rtnStr);
+                    Debug.Log("非同期："+snapshot.Value);
+                    rtnStr = "取得したデータ: " + snapshot.Value;
+                    IsCompleted = true;
                 }
                 else
                 {
-                    Debug.LogError("データベースからの読み込みに失敗しました: " + task.Exception);
+                    Debug.LogError("データの取得に失敗しました: " + task.Exception);
                 }
             });
         }
@@ -29,30 +43,13 @@ public class FirebaseReader : MonoBehaviour
         {
             Debug.LogError("Firebase Databaseの参照が初期化されていません");
         }
-
-        return rtnStr;
     }
 
-    private string ParseSnapshot(DataSnapshot snapshot, int level = 0)
-    {
-        StringBuilder sb = new StringBuilder();
-        string indent = new string(' ', level * 2); // インデント用のスペース
+    public bool GetIsCompleted(){
+        return IsCompleted;
+    }
 
-        // 子要素がある場合は再帰的に処理
-        if (snapshot.HasChildren)
-        {
-            foreach (var child in snapshot.Children)
-            {
-                sb.AppendLine($"{indent}{child.Key}:");
-                sb.Append(ParseSnapshot(child, level + 1));
-            }
-        }
-        else
-        {
-            // 子要素がない場合はその値を追加
-            sb.AppendLine($"{indent}{snapshot.Key}: {snapshot.Value}");
-        }
-
-        return sb.ToString();
+    public string GetReadStr(){
+        return rtnStr;
     }
 }

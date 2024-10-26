@@ -1,18 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class TempAvatarStorage : MonoBehaviour
+public class TempAvatarStorage
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public string[] CostumePaths {get; set;}
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public void SetUserData(){
+        //大元にデータを送る
     }
+    
 }

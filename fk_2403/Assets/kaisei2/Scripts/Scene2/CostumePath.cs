@@ -4,15 +4,6 @@ using UnityEngine;
 
 public class CostumePath : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public string SpritePath { get; set; }
+    public int ID{get; set;}
 }

@@ -157,7 +157,7 @@ public class Scene1Manager : MonoBehaviour
         // 新規登録が成功したらシーンを遷移
         if (registerSuccess)
         {
-            SceneManager.LoadScene("Scene3"); // 登録完了後のシーンへ遷移
+            SceneManager.LoadScene("Scene2"); // 登録完了後のシーンへ遷移
         }
         else
         {
@@ -184,5 +184,4 @@ public class Scene1Manager : MonoBehaviour
             Destroy(errorInstance, 3f);
         }
     }
-
 }

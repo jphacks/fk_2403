@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Scene2Manager : MonoBehaviour
@@ -16,15 +17,19 @@ public class Scene2Manager : MonoBehaviour
 
     }
 
-    public void OnSwitchButtonClicked(int value){
-        foreach(Transform obj in costumeView){
+    public void OnSwitchButtonClicked(int value)
+    {
+        foreach (Transform obj in costumeView)
+        {
             obj.gameObject.SetActive(false);
         }
         costumeView.GetChild(value).gameObject.SetActive(true);
     }
 
-    public void OnEndButtonClicked(){
+    public void OnEndButtonClicked()
+    {
         //終わった時データ送る
         loadAvatarImage.tempAvatarStorage.SetUserData();
+        SceneManager.LoadScene("Scene3");
     }
 }

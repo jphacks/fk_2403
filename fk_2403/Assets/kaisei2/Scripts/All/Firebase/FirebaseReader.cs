@@ -8,6 +8,7 @@ using System.Collections.Generic;
 
 public class FirebaseReader : MonoBehaviour
 {
+
     // サーバーからデータを取得する非同期メソッド
     public async Task<string> GetDataFromServer(string path)
     {
@@ -25,7 +26,7 @@ public class FirebaseReader : MonoBehaviour
             }
 
             DataSnapshot snapshot = await reference.GetValueAsync();
-            if(snapshot.Exists)
+            if (snapshot.Exists)
             {
                 //Debug.Log("非同期：" + snapshot.Value);
                 rtnStr = snapshot.Value.ToString();

@@ -50,6 +50,7 @@ public class FirebaseManager : MonoBehaviour
 
         // Firebaseの初期化完了イベントにリスナーを登録
         FirebaseInitializer.OnFirebaseInitialized += CheckConnection;
+
     }
 
     void Start()
@@ -58,6 +59,17 @@ public class FirebaseManager : MonoBehaviour
         writer = GetComponent<FirebaseWriter>();
         reader = GetComponent<FirebaseReader>();
         initializer = GetComponent<FirebaseInitializer>();
+
+
+        if (reader == null)
+        {
+            Debug.LogError("FirebaseReaderが正しく初期化されていません。スクリプトがアタッチされているか確認してください。");
+        }
+        else
+        {
+            Debug.Log("FirebaseReaderが正常に初期化されました。");
+        }
+
 
         //初期化
         initializer.InitializeFirebase();
@@ -94,17 +106,23 @@ public class FirebaseManager : MonoBehaviour
     /// <param name="action"></param>
     public async void ReadData(string path, System.Action<string> action)
     {
+        if (reader == null)
+        {
+            Debug.LogError("FirebaseReaderがnullです。正しく初期化されているか確認してください。");
+            return;
+        }
         Debug.Log("データを取得中...");
 
         var result = await reader.GetDataFromServer(path);
 
         Debug.Log("データの取得完了: " + result);
-        
+
         // データを取得後に追加の処理を実行
         action(result);
     }
 
-    public void AddAutoID(string key, System.Action<string> action){
+    public void AddAutoID(string key, System.Action<string> action)
+    {
         // 新しいノードの参照を取得
         DatabaseReference newRef = FirebaseInitializer.DatabaseReference.Child(key).Push();
         // 自動生成IDでデータを生成

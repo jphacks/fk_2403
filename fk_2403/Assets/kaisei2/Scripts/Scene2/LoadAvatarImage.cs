@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,16 +12,17 @@ public class LoadAvatarImage : MonoBehaviour
 
     [SerializeField] Transform[] parent;
 
-    Image[] costumeImgs;
+    List<SpriteRenderer> costumeImgs = new List<SpriteRenderer>();
 
-    TempAvatarStorage tempAvatarStorage = new TempAvatarStorage();
+    public TempAvatarStorage tempAvatarStorage = new TempAvatarStorage();
     
     //アバターの画像のコンポーネントを持ってくる
     public void GetImage() 
     {
         for (int i = 0; i < 5; i++)
         {
-            costumeImgs[i] = Avatar.transform.GetChild(i).GetComponent<Image>();
+            Debug.Log(i+"*"+Avatar.transform.GetChild(i).name);
+            costumeImgs.Add(Avatar.transform.GetChild(i).GetComponent<SpriteRenderer>());
         }  
     }
     //ボタン押す方のアイコンを生成する
@@ -34,6 +36,7 @@ public class LoadAvatarImage : MonoBehaviour
                 GameObject ins = Instantiate(IconPrefab, parent[i]);
                 ins.GetComponent<Image>().sprite = sprite;
                 ins.GetComponent<CostumePath>().SpritePath = path + "/" + i + "/" + sprite.name;
+                ins.GetComponent<CostumePath>().ID = i;
             }
         }
     }

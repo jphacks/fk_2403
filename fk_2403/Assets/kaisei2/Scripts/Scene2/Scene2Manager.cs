@@ -16,7 +16,7 @@ public class Scene2Manager : MonoBehaviour
 
     }
 
-    public void OnCostumeButtonClicked(int value){
+    public void OnSwitchButtonClicked(int value){
         foreach(Transform obj in costumeView){
             obj.gameObject.SetActive(false);
         }

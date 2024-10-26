@@ -21,14 +21,18 @@ public class Scene4Manager : MonoBehaviour
         string passphrase = passphrase_input.text;
         createSendProfilePassphrase.SetPassphrase("ExchangeProf/"+passphrase, () => {
             FirebaseManager.instance.AddAutoID("ExchangeProf/"+passphrase, (value) => {
-                Dictionary<string, object> data = new Dictionary<string, object>
-                {
-                    { "profbase", profIndex },
-                    { "seal", 0 },
-                    { "originalUserId", "myID"},
-                    { "currentUserId", "yourId"}
-                };
-                FirebaseManager.instance.AddDictionaryToFirebase("ProfInfo/"+value, data);
+                // Dictionary<string, object> data = new Dictionary<string, object>
+                // {
+                //     { "profbase", profIndex },
+                //     { "seal", 0 },
+                //     { "originalUserId", "myID"},
+                //     { "currentUserId", "yourId"}
+                // };
+                // FirebaseManager.instance.AddDictionaryToFirebase("ProfInfo/"+value, data);
+                FirebaseManager.instance.WriteData("ProfInfo/"+value+"/profbase", profIndex.ToString());
+                FirebaseManager.instance.WriteData("ProfInfo/"+value+"/seal", 0.ToString());
+                FirebaseManager.instance.WriteData("ProfInfo/"+value+"/originalUserId", "myID");
+                FirebaseManager.instance.WriteData("ProfInfo/"+value+"/currentUserId", "yourId");
             });
             Debug.Log("END");
         }, () => {

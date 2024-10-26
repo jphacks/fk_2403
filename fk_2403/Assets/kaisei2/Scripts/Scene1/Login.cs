@@ -2,9 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Firebase.Auth;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Login : MonoBehaviour
 {
+
     //ログインをするためのスクリプト
     public void SignIn(FirebaseAuth auth, string email, string password)
     {
@@ -25,6 +28,7 @@ public class Login : MonoBehaviour
             if (user != null && user.Email == email)
             {
                 Debug.Log($"サインインに成功しました。ユーザーID: {user.UserId}");
+                UserDataManager.instance.uid = user.UserId;
             }
             else
             {

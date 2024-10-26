@@ -9,7 +9,7 @@ public class FirebaseManager : MonoBehaviour
     private FirebaseReader reader;
 
     private FirebaseInitializer initializer;
-    private void Awake() 
+    private void Awake()
     {
         // Firebaseの初期化完了イベントにリスナーを登録
         FirebaseInitializer.OnFirebaseInitialized += CheckConnection;
@@ -24,7 +24,7 @@ public class FirebaseManager : MonoBehaviour
 
         //初期化
         initializer.InitializeFirebase();
-        
+
     }
 
     // Firebase接続確認（初期化完了時に呼ばれる）
@@ -41,7 +41,8 @@ public class FirebaseManager : MonoBehaviour
     }
 
     //データを書き込む
-    public void WriteData(string key, string data){
+    public void WriteData(string key, string data)
+    {
         if (writer != null)
         {
             writer.WriteData(key, data);
@@ -74,7 +75,8 @@ public class FirebaseManager : MonoBehaviour
 
     public void testb()
     {
-        ReadData("test/id/aaa", (value) => {
+        ReadData("test/id/aaa", (value) =>
+        {
             Debug.Log(value);
         });
     }

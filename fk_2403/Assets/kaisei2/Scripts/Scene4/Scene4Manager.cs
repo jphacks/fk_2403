@@ -5,20 +5,46 @@ using UnityEngine.UI;
 
 public class Scene4Manager : MonoBehaviour
 {
-    [SerializeField] InputField password_input;
+    [SerializeField] InputField passphrase_input;
     [SerializeField] InputField detatime_input;
-    CreateSendProfilePassword createSendProfilePassword;
+    CreateSendProfilePassphrase createSendProfilePassphrase;
+
+    int profIndex = 0;
 
     void Start()
     {
-        createSendProfilePassword = GetComponent<CreateSendProfilePassword>();
+        createSendProfilePassphrase = GetComponent<CreateSendProfilePassphrase>();
         
     }
 
     public void OnSendProfileButtonClicked(){
-        string path = password_input.text;
-        createSendProfilePassword.SetPasssword(path, () => {
+        string passphrase = passphrase_input.text;
+        createSendProfilePassphrase.SetPassphrase("ExchangeProf/"+passphrase, () => {
+            FirebaseManager.instance.AddAutoID("ExchangeProf/"+passphrase, (value) => {
+                Dictionary<string, object> data = new Dictionary<string, object>
+                {
+                    { "profbase", profIndex },
+                    { "seal", 0 },
+                    { "originalUserId", "myID"},
+                    { "currentUserId", "yourId"}
+                };
+                FirebaseManager.instance.AddDictionaryToFirebase("ProfInfo/"+value, data);
+            });
             Debug.Log("END");
+        }, () => {
+            //error
+            Debug.Log("すでに合言葉が存在してます");
         });
+    }
+
+    public void OnProfButtonClicked(int value){
+        profIndex += value;
+        if(profIndex > 4){
+            profIndex = 0;
+        }
+
+        if(profIndex < 0){
+            profIndex = 4;
+        }
     }
 }

@@ -3,6 +3,31 @@ using UnityEngine;
 using System.Threading.Tasks;
 using System;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Firebase.Database;
+using Firebase;
+using Firebase.Extensions;
+using System.Collections.Generic;
+
+// DictionaryをJSONに変換するためのヘルパークラス
+[System.Serializable]
+public class Serialization<TKey, TValue>
+{
+    public TKey[] keys;
+    public TValue[] values;
+
+    public Serialization(Dictionary<TKey, TValue> dictionary)
+    {
+        keys = new TKey[dictionary.Count];
+        values = new TValue[dictionary.Count];
+        int i = 0;
+        foreach (var pair in dictionary)
+        {
+            keys[i] = pair.Key;
+            values[i] = pair.Value;
+            i++;
+        }
+    }
+}
 
 public class FirebaseManager : MonoBehaviour
 {
@@ -71,12 +96,48 @@ public class FirebaseManager : MonoBehaviour
     {
         Debug.Log("データを取得中...");
 
-        string result = await reader.GetDataFromServer(path);
+        var result = await reader.GetDataFromServer(path);
 
         Debug.Log("データの取得完了: " + result);
         
         // データを取得後に追加の処理を実行
         action(result);
+    }
+
+    public void AddAutoID(string key, System.Action<string> action){
+        // 新しいノードの参照を取得
+        DatabaseReference newRef = FirebaseInitializer.DatabaseReference.Child(key).Push();
+        // 自動生成IDでデータを生成
+        newRef.SetValueAsync("").ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompleted)
+            {
+                action(newRef.Key);
+                Debug.Log("Empty node added successfully at path: " + newRef.Key);
+            }
+            else
+            {
+                // エラー詳細をログに表示
+                Debug.LogError("Error adding empty node: " + task.Exception);
+            }
+        });
+    }
+
+    public void AddDictionaryToFirebase(string path, Dictionary<string, object> data)
+    {
+        // DictionaryをJSONに変換
+        string jsonData = JsonUtility.ToJson(new Serialization<string, object>(data));
+        FirebaseInitializer.DatabaseReference.Child(path).SetRawJsonValueAsync(jsonData).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompleted)
+            {
+                Debug.Log("Dictionary added successfully at path: " + path);
+            }
+            else
+            {
+                Debug.LogError("Error adding dictionary: " + task.Exception);
+            }
+        });
     }
 
     void OnDestroy()

@@ -9,12 +9,7 @@ public class FirebaseInitializer : MonoBehaviour
     public static DatabaseReference DatabaseReference { get; private set; }
     public static event Action OnFirebaseInitialized; // 初期化完了イベント
 
-    void Start()
-    {
-        InitializeFirebase();
-    }
-
-    private void InitializeFirebase()
+    public void InitializeFirebase()
     {
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
         {

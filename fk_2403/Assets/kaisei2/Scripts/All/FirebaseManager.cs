@@ -5,14 +5,20 @@ public class FirebaseManager : MonoBehaviour
     private FirebaseWriter writer;
     private FirebaseReader reader;
 
+    private FirebaseInitializer initializer;
+
     void Start()
     {
         // FirebaseWriterとFirebaseReaderのインスタンスを取得
-        writer = FindObjectOfType<FirebaseWriter>();
-        reader = FindObjectOfType<FirebaseReader>();
+        writer = GetComponent<FirebaseWriter>();
+        reader = GetComponent<FirebaseReader>();
+        initializer = GetComponent<FirebaseInitializer>();
 
         // Firebaseの初期化完了イベントにリスナーを登録
         FirebaseInitializer.OnFirebaseInitialized += CheckConnection;
+
+        //初期化
+        initializer.InitializeFirebase();
     }
 
     // Firebase接続確認（初期化完了時に呼ばれる）
@@ -30,6 +36,17 @@ public class FirebaseManager : MonoBehaviour
             Debug.LogError("Firebaseへの接続が未完了です。");
         }
     }
+
+    //データを書き込む
+    public void WriteData(string key, string data){
+        if (writer != null)
+        {
+            writer.WriteData(key, data);
+        }
+    }
+
+    //データを読み込む
+    
 
     // サンプルデータを書き込む
     public void WriteSampleData()

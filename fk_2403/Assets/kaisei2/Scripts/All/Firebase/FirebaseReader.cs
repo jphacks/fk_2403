@@ -3,12 +3,14 @@ using Firebase.Extensions;
 using UnityEngine;
 using System.Text;
 using System;
+using System.Threading.Tasks;
 
 public class FirebaseReader : MonoBehaviour
 {
-    bool IsCompleted = false;
-    string rtnStr = "";
-    public void ReadNestedData(string path)
+    public bool IsCompleted { get; private set; }
+    public string rtnStr { get; private set; }
+
+    public async Task ReadNestedDataAsync(string path)
     {
         IsCompleted = false;
 
@@ -24,32 +26,21 @@ public class FirebaseReader : MonoBehaviour
                 reference = reference.Child(key);
             }
 
-            reference.GetValueAsync().ContinueWithOnMainThread(task =>
+            try
             {
-                if (task.IsCompleted)
-                {
-                    DataSnapshot snapshot = task.Result;
-                    Debug.Log("非同期："+snapshot.Value);
-                    rtnStr = "取得したデータ: " + snapshot.Value;
-                    IsCompleted = true;
-                }
-                else
-                {
-                    Debug.LogError("データの取得に失敗しました: " + task.Exception);
-                }
-            });
+                DataSnapshot snapshot = await reference.GetValueAsync();
+                //Debug.Log("非同期：" + snapshot.Value);
+                rtnStr = snapshot.Value.ToString();
+                IsCompleted = true; // 完了フラグを設定
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError("データの取得に失敗しました: " + ex.Message);
+            }
         }
         else
         {
             Debug.LogError("Firebase Databaseの参照が初期化されていません");
         }
-    }
-
-    public bool GetIsCompleted(){
-        return IsCompleted;
-    }
-
-    public string GetReadStr(){
-        return rtnStr;
     }
 }

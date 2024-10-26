@@ -1,5 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using System.Threading.Tasks;
+using System;
 
 public class FirebaseManager : MonoBehaviour
 {
@@ -7,10 +9,6 @@ public class FirebaseManager : MonoBehaviour
     private FirebaseReader reader;
 
     private FirebaseInitializer initializer;
-    private bool IsReadWaiting = true;
-    private string ReadStr = "";
-    float time = 0f;
-    float interval = 0.5f;
     private void Awake() 
     {
         // Firebaseの初期化完了イベントにリスナーを登録
@@ -27,22 +25,6 @@ public class FirebaseManager : MonoBehaviour
         //初期化
         initializer.InitializeFirebase();
         
-    }
-
-    private void Update() {
-        // if(IsReadWaiting){
-        //     time += Time.deltaTime;
-        //     if(time >= interval)
-        //     {
-        //         time = 0;
-        //         if(reader.GetIsCompleted())
-        //         {
-        //             ReadStr = reader.GetReadStr();
-        //             IsReadWaiting = false;
-        //         }
-
-        //     }
-        // }
     }
 
     // Firebase接続確認（初期化完了時に呼ばれる）
@@ -67,11 +49,23 @@ public class FirebaseManager : MonoBehaviour
     }
 
     //データベースからデータを読み込む
-    public void ReadData(string key)
+    public async void ReadData(string path, System.Action<string> action)
     {
-        reader.ReadNestedData(key);
-        IsReadWaiting = true;
+        await reader.ReadNestedDataAsync(path);
+
+        if (reader.IsCompleted)
+        {
+            // データ取得後の処理
+            //Debug.Log("取得したデータを使って処理します: " + reader.rtnStr);
+            // ここにさらに処理を追加できます
+            action(reader.rtnStr);
+        }
+        else
+        {
+            Debug.LogWarning("データが取得できませんでした");
+        }
     }
+
 
     public void testa()
     {
@@ -80,9 +74,9 @@ public class FirebaseManager : MonoBehaviour
 
     public void testb()
     {
-        ReadData("test/id/aaa");
-        Debug.Log(reader.GetReadStr());
-
+        ReadData("test/id/aaa", (value) => {
+            Debug.Log(value);
+        });
     }
 
     void OnDestroy()

@@ -2,15 +2,27 @@ using Unity.VisualScripting;
 using UnityEngine;
 using System.Threading.Tasks;
 using System;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 public class FirebaseManager : MonoBehaviour
 {
+    public static FirebaseManager instance = null;
     private FirebaseWriter writer;
     private FirebaseReader reader;
 
     private FirebaseInitializer initializer;
     private void Awake()
     {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
+
         // Firebaseの初期化完了イベントにリスナーを登録
         FirebaseInitializer.OnFirebaseInitialized += CheckConnection;
     }
@@ -50,36 +62,36 @@ public class FirebaseManager : MonoBehaviour
     }
 
     //データベースからデータを読み込む
+    /// <summary>
+    /// 非同期なので、値を使って何かしたいときはその後の処理全部actionにいれてください
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="action"></param>
     public async void ReadData(string path, System.Action<string> action)
     {
-        await reader.ReadNestedDataAsync(path);
+        Debug.Log("データを取得中...");
 
-        if (reader.IsCompleted)
-        {
-            // データ取得後の処理
-            //Debug.Log("取得したデータを使って処理します: " + reader.rtnStr);
-            // ここにさらに処理を追加できます
-            action(reader.rtnStr);
-        }
-        else
-        {
-            Debug.LogWarning("データが取得できませんでした");
-        }
+        string result = await reader.GetDataFromServer(path);
+
+        Debug.Log("データの取得完了: " + result);
+        
+        // データを取得後に追加の処理を実行
+        action(result);
     }
 
 
-    public void testa()
-    {
-        WriteData("test/id/aaa", "teststr");
-    }
+    // public void testa()
+    // {
+    //     WriteData("test/id/aaa", "teststr");
+    // }
 
-    public void testb()
-    {
-        ReadData("test/id/aaa", (value) =>
-        {
-            Debug.Log(value);
-        });
-    }
+    // public void testb()
+    // {
+    //     ReadData("test/id/aaa", (value) =>
+    //     {
+    //         Debug.Log(value);
+    //     });
+    // }
 
     void OnDestroy()
     {

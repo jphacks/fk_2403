@@ -21,12 +21,9 @@ public class Scene5Manager_M : MonoBehaviour
 
     public string passPhrase = null;
 
-    /*
-    private float myLatitude;
-    private float myLongitude;
-    private float opponentLatitude;
-    private float opponentLongitude;
-    */
+    public float distance = float.MaxValue;
+
+    private const float threshold = 0.0004f;
 
     void Awake()
     {
@@ -54,21 +51,17 @@ public class Scene5Manager_M : MonoBehaviour
     {
         Debug.Log("Searchclicked:"+passPhrase);
         if(passPhrase == null) return;//壊れたら怖いのでチェック.挙動に問題がないなら消していい.
-        if(passPhrase.Equals("aaa"))//合言葉が存在したら.
+        if(passPhrase.Equals("aaa"))//合言葉が存在したら.//仮置きaaa.
         {
             Debug.Log("aaadayo");
             StartCoroutine(locationServiceScript_M.StartLocationSystem());
             StartCoroutine(locationServiceScript_M.DisplayDirections());
             isSeatch = true;
-            return;
         }
-        /*
-        Debug.Log("aaaaaaaaaaaa");
-        StartCoroutine(locationServiceScript_M.StartLocationSystem());
-        StartCoroutine(locationServiceScript_M.DisplayDirections());
-        isSeatch = true;
-        */
-        //StartCoroutine(locationServiceScript_M.GetLocation());
+        else
+        {
+            Debug.Log("あいことばが存在しません");
+        }
     }
 
     public void OnClickReceive()
@@ -76,32 +69,17 @@ public class Scene5Manager_M : MonoBehaviour
         Debug.Log("Searchclicked:"+passPhrase);
         if(passPhrase == null) return;
         if(!isSeatch) return;
-        //locationServiceScript_M.
-        /*
-        if(true)//正しい合言葉が入力されていたら.
+        //相手との距離が閾値以下だったら.
+        if(distance <= threshold)
         {
-
-        }
-        else{
-            Debug.Log("合言葉が正しくありません");
-        }
-        //相手との距離を取りたい
-        if(true)
-        {
-            Debug.Log("相手との距離が遠いです");
+            //ここで受け取り処理をする.
+            isReceivePanelDisplay = true;
         }
         else
         {
-            Debug.Log("受け取り推移");
-            isReceivePanelDisplay = true;
+            Debug.Log("相手との距離が遠いです");
         }
-        */
-        isReceivePanelDisplay = true; 
-        //Debug.Log("uketoru");
-        /*
-        panel1.SetActive(false);
-        panel2.SetActive(true);
-        */
+         
     }
 
     public void OnClickClose()
@@ -109,6 +87,7 @@ public class Scene5Manager_M : MonoBehaviour
         isReceivePanelDisplay = false;
         isDisplayDirectionsEnd = false;
         isSeatch = false;
+        inputField = null;
         panel1.SetActive(true);
         panel2.SetActive(false);
         Debug.Log("clode");

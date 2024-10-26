@@ -1,8 +1,15 @@
+using Firebase.Database;
 using Firebase.Extensions;
 using UnityEngine;
+using System.Text;
 
 public class FirebaseWriter : MonoBehaviour
 {
+    /// <summary>
+    /// ネストが深い場合、スラッシュで挟む
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
     public void WriteData(string key, string value)
     {
         if (FirebaseInitializer.DatabaseReference != null)

@@ -21,9 +21,8 @@ public class LocationServiceScript_M : MonoBehaviour
 
     private float myLatitude;
     private float myLongitude;
-    private float opponentLatitude = 33.67147f;
-    private float opponentLongitude = 130.4468f;
-
+    private float opponentLatitude = 33.67044f;
+    private float opponentLongitude = 130.447f;
     // Start is called before the first frame update
     void Start()
     {
@@ -33,14 +32,15 @@ public class LocationServiceScript_M : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
 
     public IEnumerator StartLocationSystem()
     {
         //位置情報が拒否されていたら終了.
-        if (!Input.location.isEnabledByUser) {
+        if (!Input.location.isEnabledByUser)
+        {
             Debug.Log("位置情報を許可してください");
             yield break;
         }
@@ -92,12 +92,12 @@ public class LocationServiceScript_M : MonoBehaviour
 
     private double GetLocationDistance(float latitude1, float longtitude1, float latitude2, float longtitude2)
     {
-        return Mathf.Sqrt((latitude2-latitude1)*(latitude2-latitude1)+(longtitude2-longtitude1)*(longtitude2-longtitude1));
+        return Mathf.Sqrt((latitude2 - latitude1) * (latitude2 - latitude1) + (longtitude2 - longtitude1) * (longtitude2 - longtitude1));
     }
 
     public IEnumerator DisplayDirections(/*float myLatitude, float myLongitude, *//*float opponentLatitude, float opponentLongitude*/)
     {
-        while(true)
+        while (true)
         {
             StartCoroutine(GetLocation());
             //ここで相手の座標を取りたい.
@@ -118,15 +118,15 @@ public class LocationServiceScript_M : MonoBehaviour
             //tmp.transform.LookAt(targetPosition);
             Debug.Log("dir");
             GetLocation();
-            if(Scene5Manager_M.instance.isReceivePanelDisplay)
+            if (Scene5Manager_M.instance.isReceivePanelDisplay)
             {
                 Destroy(tmp);
                 Debug.Log("tomeru");
-                Scene5Manager_M.instance.isDisplayDirectionsEnd = true; 
+                Scene5Manager_M.instance.isDisplayDirectionsEnd = true;
                 yield break;
             }
             yield return new WaitForSeconds(1);
-        }       
+        }
     }
 
     private Vector3 CalculatePosition(float latitude, float longitude)

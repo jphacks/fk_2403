@@ -7,6 +7,7 @@ using Firebase.Auth;
 using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
 using Unity.Mathematics;
+using UnityEngine.UIElements;
 
 public class Scene1Manager : MonoBehaviour
 {
@@ -20,6 +21,8 @@ public class Scene1Manager : MonoBehaviour
     public string email;
     public string password;
 
+    //利用規約に同意しているか
+    public bool check = false;
 
     //パネル
     [SerializeField] GameObject SignInPanel;
@@ -42,6 +45,10 @@ public class Scene1Manager : MonoBehaviour
 
     // エラーメッセージを表示するprefab
     [SerializeField] private GameObject Errorobj;
+
+    [SerializeField] GameObject checkboxobj;
+    [SerializeField] Sprite checksprite;
+    [SerializeField] Sprite checkbasesprite;
 
 
     // Start is called before the first frame update
@@ -82,15 +89,18 @@ public class Scene1Manager : MonoBehaviour
     public void onClicked_nextTutorial()
     {
         //チュートリアルの画面で進む
-        if (tutorialnum < TutorialImage.Length - 1)
+        if (tutorialnum < TutorialImage.Length - 2)
         {
             tutorialnum++;
+            TutorialImage[tutorialnum].SetActive(true);
         }
         else
         {
+            TutorialImage[TutorialImage.Length - 1].SetActive(true);
             GameObject.Find("TutorialPanel").transform.Find("FinishButton").gameObject.SetActive(true);
         }
-        TutorialImage[tutorialnum].SetActive(true);
+        Debug.Log(tutorialnum);
+
     }
 
     public void onClicked_backTutorial()
@@ -114,6 +124,7 @@ public class Scene1Manager : MonoBehaviour
             return;
         }
 
+
         // ログイン処理の実行
         bool loginSuccess = await login.SignIn(auth, email, password);
 
@@ -127,6 +138,9 @@ public class Scene1Manager : MonoBehaviour
             ShowErrorMessage("サインインに失敗しました。");
             Debug.LogWarning("ログインに失敗しました。シーン遷移をキャンセルします。");
         }
+
+
+
     }
 
     // アカウント登録ボタンが押されたときの処理
@@ -151,18 +165,24 @@ public class Scene1Manager : MonoBehaviour
             return;
         }
 
-        // 新規登録処理の実行
-        bool registerSuccess = await register.CreateUserWithEmailAndPassword(signinmail, signinpass);
-
-        // 新規登録が成功したらシーンを遷移
-        if (registerSuccess)
+        if (check)
         {
-            SceneManager.LoadScene("Scene2"); // 登録完了後のシーンへ遷移
+            // 新規登録処理の実行
+            bool registerSuccess = await register.CreateUserWithEmailAndPassword(signinmail, signinpass);
+            // 新規登録が成功したらシーンを遷移
+            if (registerSuccess)
+            {
+                SceneManager.LoadScene("Scene2"); // 登録完了後のシーンへ遷移
+            }
+            else
+            {
+                ShowErrorMessage(register.errorMessage);
+                Debug.LogWarning("登録に失敗しました。シーン遷移をキャンセルします。");
+            }
         }
         else
         {
-            ShowErrorMessage(register.errorMessage);
-            Debug.LogWarning("登録に失敗しました。シーン遷移をキャンセルします。");
+            ShowErrorMessage("利用規約に同意していません。");
         }
     }
 
@@ -183,5 +203,45 @@ public class Scene1Manager : MonoBehaviour
             // 一定時間後にエラーメッセージを自動的に削除する (5秒後)
             Destroy(errorInstance, 3f);
         }
+    }
+
+    public void onClicked_Backbutton(GameObject storeobj)
+    {
+        //残したいパネルをアタッチしておく
+        // storeobjの親オブジェクトを取得
+        Transform parentTransform = storeobj.transform.parent;
+
+        if (parentTransform != null)
+        {
+            // 親の子オブジェクトをすべてチェック
+            foreach (Transform child in parentTransform)
+            {
+                // storeobj自身を除外して、他のオブジェクトを非表示にする
+                if (child.gameObject != storeobj)
+                {
+                    child.gameObject.SetActive(false);
+                }
+            }
+        }
+        else
+        {
+            Debug.LogWarning("親オブジェクトが見つかりませんでした。");
+        }
+    }
+
+    public void onClicked_checkbox()
+    {
+        if (check)
+        {
+            check = false;
+            checkboxobj.GetComponent<UnityEngine.UI.Image>().sprite = checkbasesprite;
+        }
+        else
+        {
+            check = true;
+            checkboxobj.GetComponent<UnityEngine.UI.Image>().sprite = checksprite;
+        }
+
+
     }
 }

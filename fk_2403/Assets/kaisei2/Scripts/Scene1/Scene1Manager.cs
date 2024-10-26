@@ -184,5 +184,4 @@ public class Scene1Manager : MonoBehaviour
             Destroy(errorInstance, 3f);
         }
     }
-
 }

@@ -6,7 +6,7 @@ using Firebase.Auth;
 public class Register : MonoBehaviour
 {
     //新規登録をするためのスクリプト
-    private void CreateUserWithEmailAndPassword(string email, string password)
+    public void CreateUserWithEmailAndPassword(string email, string password)
     {
         var auth = FirebaseAuth.DefaultInstance;
         auth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWith(task =>
@@ -22,6 +22,9 @@ public class Register : MonoBehaviour
                 Debug.LogWarning($"SignInWithCredentialAsync was fault. {task.Exception}");
                 return;
             }
+
+            // var newUser = task.Result;
+            // Debug.Log($"Firebase上でメールアドレス認証によるユーザ作成に成功しました。 UserId is {newUser.UserId}");
         });
     }
 }

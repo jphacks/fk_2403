@@ -4,15 +4,13 @@ using UnityEngine;
 
 public class TermsOfUse : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    bool isCheck = false;
+    //利用規約確認用スクリプト
+    public bool GetIsCheck(){
+        return isCheck;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public void OnTggleValueChanged(bool value){
+        isCheck = value;
     }
 }

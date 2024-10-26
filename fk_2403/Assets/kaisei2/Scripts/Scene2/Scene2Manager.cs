@@ -22,4 +22,9 @@ public class Scene2Manager : MonoBehaviour
         }
         costumeView.GetChild(value).gameObject.SetActive(true);
     }
+
+    public void OnEndButtonClicked(){
+        //終わった時データ送る
+        loadAvatarImage.tempAvatarStorage.SetUserData();
+    }
 }

@@ -56,5 +56,8 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "fk_2403.sln"
+    "dotnet.defaultSolution": "fk_2403.sln",
+    "cSpell.words": [
+        "tutorialnum"
+    ]
 }

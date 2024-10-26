@@ -21,8 +21,8 @@ public class LocationServiceScript_M : MonoBehaviour
 
     private float myLatitude;
     private float myLongitude;
-    private float opponentLatitude = 33.67044f;
-    private float opponentLongitude = 130.447f;
+    private float opponentLatitude = 33.67161f;
+    private float opponentLongitude = 130.4463f;
     // Start is called before the first frame update
     void Start()
     {

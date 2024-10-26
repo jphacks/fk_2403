@@ -6,6 +6,7 @@ using Firebase;
 using Firebase.Auth;
 using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
+using Unity.Mathematics;
 
 public class Scene1Manager : MonoBehaviour
 {
@@ -33,6 +34,15 @@ public class Scene1Manager : MonoBehaviour
     [SerializeField] private InputField loginmailField;
     [SerializeField] private InputField loginpassField;
 
+    //インプットフィールド(新規登録)
+    [SerializeField] private InputField signinmailField;
+    [SerializeField] private InputField signinpassField;
+    [SerializeField] private InputField signinrepassField;
+
+
+    // エラーメッセージを表示するprefab
+    [SerializeField] private GameObject Errorobj;
+
 
     // Start is called before the first frame update
     void Start()
@@ -59,7 +69,6 @@ public class Scene1Manager : MonoBehaviour
 
     public void onClicked_toLogin()
     {
-
         //ログイン画面を表示
         LoginPanel.SetActive(true);
     }
@@ -94,24 +103,86 @@ public class Scene1Manager : MonoBehaviour
         }
     }
 
-    public void onClicked_logindone()
+    public async void onClicked_logindone()
     {
         email = loginmailField.text;
         password = loginpassField.text;
 
         if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
         {
-            Debug.LogWarning("Email or password is empty. Please enter valid credentials.");
+            ShowErrorMessage("メールアドレスまたはパスワードが空です。正しい情報を入力してください。");
             return;
         }
 
         // ログイン処理の実行
-        login.SignIn(auth, email, password);
+        bool loginSuccess = await login.SignIn(auth, email, password);
 
+        // ログインが成功したらシーンを遷移
+        if (loginSuccess)
+        {
+            SceneManager.LoadScene("Scene3");
+        }
+        else
+        {
+            ShowErrorMessage("サインインに失敗しました。");
+            Debug.LogWarning("ログインに失敗しました。シーン遷移をキャンセルします。");
+        }
+    }
 
-        //ここで処理の完了を待ちたい
-        SceneManager.LoadScene("Scene2");
+    // アカウント登録ボタンが押されたときの処理
+    public async void onClicked_signindone()
+    {
+        string signinmail = signinmailField.text;
+        string signinpass = signinpassField.text;
+        string signinrepass = signinrepassField.text;
 
+        // パスワードが一致するか確認
+        if (signinpass != signinrepass)
+        {
+            ShowErrorMessage("パスワードが一致しません。");
+            return;
+        }
+
+        // 入力が正しいか確認
+        if (string.IsNullOrEmpty(signinmail) || string.IsNullOrEmpty(signinpass))
+        {
+            ShowErrorMessage("メールアドレスまたはパスワードが空です。正しい情報を入力してください。");
+            Debug.LogWarning("メールアドレスまたはパスワードが空です。正しい情報を入力してください。");
+            return;
+        }
+
+        // 新規登録処理の実行
+        bool registerSuccess = await register.CreateUserWithEmailAndPassword(signinmail, signinpass);
+
+        // 新規登録が成功したらシーンを遷移
+        if (registerSuccess)
+        {
+            SceneManager.LoadScene("Scene3"); // 登録完了後のシーンへ遷移
+        }
+        else
+        {
+            ShowErrorMessage(register.errorMessage);
+            Debug.LogWarning("登録に失敗しました。シーン遷移をキャンセルします。");
+        }
+    }
+
+    // エラーメッセージを表示する関数
+    public void ShowErrorMessage(string message)
+    {
+        if (Errorobj != null)
+        {
+            // プレハブを生成
+            GameObject errorInstance = Instantiate(Errorobj, GameObject.Find("Canvas").transform);
+            // 生成したプレハブの中のTextコンポーネントを探す
+            Text errorText = errorInstance.GetComponentInChildren<Text>();
+            if (errorText != null)
+            {
+                errorText.text = message;
+            }
+            errorText.text = message;
+            // 一定時間後にエラーメッセージを自動的に削除する (5秒後)
+            Destroy(errorInstance, 3f);
+        }
     }
 
 }

@@ -1,40 +1,32 @@
-using System.Collections;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using Firebase.Auth;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class Login : MonoBehaviour
 {
-
-    //ログインをするためのスクリプト
-    public void SignIn(FirebaseAuth auth, string email, string password)
+    // ログインをするためのスクリプト
+    public async Task<bool> SignIn(FirebaseAuth auth, string email, string password)
     {
-        auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWith(task =>
+        try
         {
-            if (task.IsCanceled)
-            {
-                Debug.LogError("SignInWithEmailAndPasswordAsync was canceled.");
-                return;
-            }
-            if (task.IsFaulted)
-            {
-                Debug.Log("アカウント情報が違います" + task.Exception);
-                return;
-            }
-
-            var user = task.Result?.User; // サインインしたユーザー情報を取得
+            var userCredential = await auth.SignInWithEmailAndPasswordAsync(email, password);
+            var user = userCredential?.User; // サインインしたユーザー情報を取得
             if (user != null && user.Email == email)
             {
                 Debug.Log($"サインインに成功しました。ユーザーID: {user.UserId}");
                 UserDataManager.instance.uid = user.UserId;
+                return true; // 成功した場合、trueを返す
             }
             else
             {
                 Debug.LogWarning("サインイン情報が一致しませんでした。");
+                return false; // 失敗した場合、falseを返す
             }
-        });
+        }
+        catch (System.Exception ex)
+        {
+            //Debug.LogError("サインインに失敗しました: " + ex.Message);
+            return false; // 例外が発生した場合も、falseを返す
+        }
     }
-
 }

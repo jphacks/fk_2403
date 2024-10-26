@@ -5,6 +5,7 @@ using UnityEngine.UI; // InputField用
 using Firebase;
 using Firebase.Auth;
 using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
 
 public class Scene1Manager : MonoBehaviour
 {
@@ -19,15 +20,18 @@ public class Scene1Manager : MonoBehaviour
     public string password;
 
 
+    //パネル
+    [SerializeField] GameObject SignInPanel;
+    [SerializeField] GameObject TermsOfUsePanel;
+    [SerializeField] GameObject LoginPanel;
+    [SerializeField] GameObject TutorialPanel;
 
-    [SerializeField] GameObject SignInCanvas;
-    [SerializeField] GameObject TermsOfUseCanvas;
-    [SerializeField] GameObject LoginCanvas;
-    [SerializeField] GameObject TutorialCanvas;
+    //チュートリアルの画像群
+    [SerializeField] GameObject[] TutorialImage;
 
-    [SerializeField]
-    GameObject[] TutorialPanel;
-
+    //インプットフィールド(ログイン画面)
+    [SerializeField] private InputField loginmailField;
+    [SerializeField] private InputField loginpassField;
 
 
     // Start is called before the first frame update
@@ -41,9 +45,59 @@ public class Scene1Manager : MonoBehaviour
         //register.CreateUserWithEmailAndPassword(email, password);
     }
 
-    // サインインをボタンから実行するメソッド
-    public void OnSignInButtonPressed()
+
+    public void onClicked_toSignIn()
     {
+        //新規登録画面を表示
+        SignInPanel.SetActive(true);
+    }
+    public void onClicked_toTermsOfUse()
+    {
+        //利用規約を表示
+        TermsOfUsePanel.SetActive(true);
+    }
+
+    public void onClicked_toLogin()
+    {
+
+        //ログイン画面を表示
+        LoginPanel.SetActive(true);
+    }
+
+    public void onClicked_toTutorial()
+    {
+        //チュートリアル画面を表示
+        TutorialPanel.SetActive(true);
+    }
+
+    public void onClicked_nextTutorial()
+    {
+        //チュートリアルの画面で進む
+        if (tutorialnum < TutorialImage.Length - 1)
+        {
+            tutorialnum++;
+        }
+        else
+        {
+            GameObject.Find("TutorialPanel").transform.Find("FinishButton").gameObject.SetActive(true);
+        }
+        TutorialImage[tutorialnum].SetActive(true);
+    }
+
+    public void onClicked_backTutorial()
+    {
+        //チュートリアルの画面で戻る
+        if (tutorialnum != 0)
+        {
+            TutorialImage[tutorialnum].SetActive(false);
+            tutorialnum--;
+        }
+    }
+
+    public void onClicked_logindone()
+    {
+        email = loginmailField.text;
+        password = loginpassField.text;
 
         if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
         {
@@ -53,36 +107,10 @@ public class Scene1Manager : MonoBehaviour
 
         // ログイン処理の実行
         login.SignIn(auth, email, password);
-    }
 
-    public void onClicked_toSignIn()
-    {
-        //新規登録画面を表示
-        SignInCanvas.SetActive(true);
-    }
-    public void onClicked_toTermsOfUse()
-    {
-        //利用規約を表示
-        TermsOfUseCanvas.SetActive(true);
-    }
 
-    public void onClicked_toLogin()
-    {
-        //ログイン画面を表示
-        LoginCanvas.SetActive(true);
-    }
-
-    public void onClicked_toTutorial()
-    {
-        //チュートリアル画面を表示
-        TutorialCanvas.SetActive(true);
-    }
-
-    public void onClicked_nextTutorial()
-    {
-        TutorialPanel[tutorialnum].SetActive(true);
-        tutorialnum++;
-
+        //ここで処理の完了を待ちたい
+        SceneManager.LoadScene("Scene2");
 
     }
 

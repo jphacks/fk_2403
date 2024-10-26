@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class UserDataManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public static UserDataManager instance = null;
+    public string uid = "";
 
-    // Update is called once per frame
-    void Update()
+    private void Awake()
     {
-        
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
     }
 }

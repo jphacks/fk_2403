@@ -51,17 +51,24 @@ public class Scene5Manager_M : MonoBehaviour
     {
         Debug.Log("Searchclicked:"+passPhrase);
         if(passPhrase == null) return;//壊れたら怖いのでチェック.挙動に問題がないなら消していい.
-        if(passPhrase.Equals("aaa"))//合言葉が存在したら.//仮置きaaa.
-        {
-            Debug.Log("aaadayo");
-            StartCoroutine(locationServiceScript_M.StartLocationSystem());
-            StartCoroutine(locationServiceScript_M.DisplayDirections());
-            isSeatch = true;
-        }
-        else
-        {
-            Debug.Log("あいことばが存在しません");
-        }
+        FirebaseManager.instance.ReadData("ExchangeProf/"+passPhrase, (value) => {
+            if(!value.Equals("NoData"))//合言葉が存在したら.//仮置きaaa.
+            {
+                Debug.Log("aaadayo");
+                //ここの時点で合言葉が一致した二人のユーザが存在することになる
+                string opponentId = "";
+                FirebaseManager.instance.
+
+                StartCoroutine(locationServiceScript_M.StartLocationSystem(passPhrase));
+                StartCoroutine(locationServiceScript_M.DisplayDirections());
+                isSeatch = true;
+            }else
+            {
+                Debug.Log("あいことばが存在しません");
+
+            }
+            
+        });
     }
 
     public void OnClickReceive()

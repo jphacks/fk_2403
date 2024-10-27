@@ -24,6 +24,7 @@ public class LocationServiceScript_M : MonoBehaviour
     private float opponentLatitude = 33.67161f;
     private float opponentLongitude = 130.4463f;
     // Start is called before the first frame update
+    private string passPhrase = "";
     void Start()
     {
         Debug.Assert(indicatorPrefab != null && targetCanvas != null && centerPosition != null);
@@ -36,7 +37,7 @@ public class LocationServiceScript_M : MonoBehaviour
     }
 
 
-    public IEnumerator StartLocationSystem()
+    public IEnumerator StartLocationSystem(string passPhrase)
     {
         //位置情報が拒否されていたら終了.
         if (!Input.location.isEnabledByUser)
@@ -47,6 +48,7 @@ public class LocationServiceScript_M : MonoBehaviour
 
         //開始.
         Input.location.Start();
+        this.passPhrase = passPhrase;
         //開始されるまでに少し時間がかかる,20秒までは待つ.
         int maxWait = 20;
         while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0)
@@ -83,6 +85,8 @@ public class LocationServiceScript_M : MonoBehaviour
             // ここで位置情報が取れる.
             myLatitude = Input.location.lastData.latitude;
             myLongitude = Input.location.lastData.longitude;
+            FirebaseManager.instance.WriteData($"ExchangeProf/{passPhrase}/{UserDataManager.instance.uid}/latitude", myLatitude.ToString());
+            FirebaseManager.instance.WriteData($"ExchangeProf/{passPhrase}/{UserDataManager.instance.uid}/longitude", myLongitude.ToString());
             Debug.Log("Location: " + myLatitude + " " + myLongitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp);
         }
 
@@ -101,6 +105,12 @@ public class LocationServiceScript_M : MonoBehaviour
         {
             StartCoroutine(GetLocation());
             //ここで相手の座標を取りたい.
+            // FirebaseManager.instance.ReadData($"ExchangeProf/{passPhrase}/{yourID}/latitude", (value) => {
+            //     opponentLatitude = float.Parse(value);
+            // });
+            // FirebaseManager.instance.ReadData($"ExchangeProf/{passPhrase}/{yourID}/longitude", (value) => {
+            //     opponentLongitude = float.Parse(value);
+            // });
             Vector3 targetPosition = CalculatePosition(opponentLatitude, opponentLongitude);
             Vector3 myPosition = CalculatePosition(myLatitude, myLongitude);
             myTxt.GetComponent<Text>().text = "m:"+myLatitude+", "+myLongitude;

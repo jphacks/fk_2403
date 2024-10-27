@@ -6,6 +6,7 @@ using Firebase.Database;
 using Firebase;
 using Firebase.Extensions;
 using System.Collections.Generic;
+using System.Linq;
 
 [System.Serializable]
 public class Serialization<TKey, TValue>
@@ -151,6 +152,34 @@ public class FirebaseManager : MonoBehaviour
             else
             {
                 Debug.LogError("Error adding dictionary: " + task.Exception);
+            }
+        });
+    }
+
+    // 同じ階層にある全ての子要素のキーを取得するメソッド
+    public void GetAllChildKeys(string path, System.Action<string[]> action)
+    {
+        FirebaseInitializer.DatabaseReference.Child(path).GetValueAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+                List<string> childKeys = new List<string>();
+
+                // 全ての子要素のキーを取得
+                foreach (DataSnapshot child in snapshot.Children)
+                {
+                    childKeys.Add(child.Key);
+                }
+
+                // コンソールに出力
+                Debug.Log("All child keys in path " + path + ": " + string.Join(", ", childKeys));
+                action(childKeys.ToArray());
+                
+            }
+            else
+            {
+                Debug.LogError("Failed to get child keys: " + task.Exception);
             }
         });
     }

@@ -25,6 +25,8 @@ public class LocationServiceScript_M : MonoBehaviour
     private float opponentLongitude = 130.4463f;
     // Start is called before the first frame update
     private string passPhrase = "";
+
+    private string opponentID = "";
     void Start()
     {
         Debug.Assert(indicatorPrefab != null && targetCanvas != null && centerPosition != null);
@@ -37,7 +39,7 @@ public class LocationServiceScript_M : MonoBehaviour
     }
 
 
-    public IEnumerator StartLocationSystem(string passPhrase)
+    public IEnumerator StartLocationSystem()
     {
         //位置情報が拒否されていたら終了.
         if (!Input.location.isEnabledByUser)
@@ -48,7 +50,7 @@ public class LocationServiceScript_M : MonoBehaviour
 
         //開始.
         Input.location.Start();
-        this.passPhrase = passPhrase;
+        
         //開始されるまでに少し時間がかかる,20秒までは待つ.
         int maxWait = 20;
         while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0)
@@ -105,12 +107,13 @@ public class LocationServiceScript_M : MonoBehaviour
         {
             StartCoroutine(GetLocation());
             //ここで相手の座標を取りたい.
-            // FirebaseManager.instance.ReadData($"ExchangeProf/{passPhrase}/{yourID}/latitude", (value) => {
-            //     opponentLatitude = float.Parse(value);
-            // });
-            // FirebaseManager.instance.ReadData($"ExchangeProf/{passPhrase}/{yourID}/longitude", (value) => {
-            //     opponentLongitude = float.Parse(value);
-            // });
+            FirebaseManager.instance.ReadData($"ExchangeProf/{passPhrase}/{opponentID}/latitude", (value) => {
+                Debug.Log(value);
+                opponentLatitude = float.Parse(value);
+            });
+            FirebaseManager.instance.ReadData($"ExchangeProf/{passPhrase}/{opponentID}/longitude", (value) => {
+                opponentLongitude = float.Parse(value);
+            });
             Vector3 targetPosition = CalculatePosition(opponentLatitude, opponentLongitude);
             Vector3 myPosition = CalculatePosition(myLatitude, myLongitude);
             myTxt.GetComponent<Text>().text = "m:"+myLatitude+", "+myLongitude;
@@ -142,5 +145,11 @@ public class LocationServiceScript_M : MonoBehaviour
     private Vector3 CalculatePosition(float latitude, float longitude)
     {
         return new Vector3(longitude, latitude, 0);
+    }
+
+    public void SetInfo(string passPhrase, string opponentID){
+        this.passPhrase = passPhrase;
+        
+        this.opponentID = opponentID;
     }
 }

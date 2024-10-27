@@ -27,6 +27,8 @@ public class LocationServiceScript_M : MonoBehaviour
     private string passPhrase = "";
 
     private string opponentID = "";
+
+    private int maxSearchCount = 30;
     void Start()
     {
         Debug.Assert(indicatorPrefab != null && targetCanvas != null && centerPosition != null);
@@ -87,8 +89,8 @@ public class LocationServiceScript_M : MonoBehaviour
             // ここで位置情報が取れる.
             myLatitude = Input.location.lastData.latitude;
             myLongitude = Input.location.lastData.longitude;
-            FirebaseManager.instance.WriteData($"ExchangeProf/{passPhrase}/{UserDataManager.instance.uid}/latitude", myLatitude.ToString());
-            FirebaseManager.instance.WriteData($"ExchangeProf/{passPhrase}/{UserDataManager.instance.uid}/longitude", myLongitude.ToString());
+            FirebaseManager.instance.WriteData($"Communication/{passPhrase}/{UserDataManager.instance.uid}/latitude", myLatitude.ToString());
+            FirebaseManager.instance.WriteData($"Communication/{passPhrase}/{UserDataManager.instance.uid}/longitude", myLongitude.ToString());
             Debug.Log("Location: " + myLatitude + " " + myLongitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp);
         }
 
@@ -107,11 +109,10 @@ public class LocationServiceScript_M : MonoBehaviour
         {
             StartCoroutine(GetLocation());
             //ここで相手の座標を取りたい.
-            FirebaseManager.instance.ReadData($"ExchangeProf/{passPhrase}/{opponentID}/latitude", (value) => {
-                Debug.Log(value);
+            FirebaseManager.instance.ReadData($"Communication/{passPhrase}/{opponentID}/latitude", (value) => {
                 opponentLatitude = float.Parse(value);
             });
-            FirebaseManager.instance.ReadData($"ExchangeProf/{passPhrase}/{opponentID}/longitude", (value) => {
+            FirebaseManager.instance.ReadData($"Communication/{passPhrase}/{opponentID}/longitude", (value) => {
                 opponentLongitude = float.Parse(value);
             });
             Vector3 targetPosition = CalculatePosition(opponentLatitude, opponentLongitude);
@@ -138,6 +139,12 @@ public class LocationServiceScript_M : MonoBehaviour
                 Scene5Manager_M.instance.isDisplayDirectionsEnd = true;
                 yield break;
             }
+            maxSearchCount--;
+            if(maxSearchCount < 0)
+            {
+                Destroy(tmp);
+                yield break;
+            }
             yield return new WaitForSeconds(1);
         }
     }
@@ -149,7 +156,6 @@ public class LocationServiceScript_M : MonoBehaviour
 
     public void SetInfo(string passPhrase, string opponentID){
         this.passPhrase = passPhrase;
-        
         this.opponentID = opponentID;
     }
 }

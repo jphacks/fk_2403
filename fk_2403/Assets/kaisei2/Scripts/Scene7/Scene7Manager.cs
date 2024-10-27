@@ -29,8 +29,6 @@ public class Scene7Manager : MonoBehaviour
         // 自分のUIDの下にあるプロフIDを取得してコンソールに表示
         FetchAndDisplayProfileIds();
 
-        //書いてもらったプロフを表示
-        LoadResultProf();
     }
 
     // 自分のUIDのノードの下にあるプロフIDを取得して表示するメソッド
@@ -111,9 +109,10 @@ public class Scene7Manager : MonoBehaviour
         });
     }
 
-    void LoadResultProf(){
+    public void LoadResultProf(){
         FirebaseManager.instance.GetAllChildKeys("ProfInfo", (keys) => {
             foreach(string key in keys){
+                Debug.Log(key);
                 //読み込み
                 ReadName(key);
             }
@@ -128,7 +127,7 @@ public class Scene7Manager : MonoBehaviour
             
         });
         FirebaseManager.instance.ReadData($"ProfInfo/{key}/Nickname", (value) => {
-            if(value.Equals("NoData")){
+            if(!value.Equals("NoData")){
                 nicknameText.text = value;
             }
             

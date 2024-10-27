@@ -203,7 +203,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 48411875}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1773998153}
+        m_TargetAssemblyTypeName: Scene7Manager, Assembly-CSharp
+        m_MethodName: LoadResultProf
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &48411875
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -247,6 +259,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4605339171804185362, guid: c7dd9d51635e84e97a3a4ebe7c6e4d8f, type: 3}
   m_PrefabInstance: {fileID: 1924560746278914132}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &236969631 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2721932197375738832, guid: c7dd9d51635e84e97a3a4ebe7c6e4d8f, type: 3}
+  m_PrefabInstance: {fileID: 1924560746278914132}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &291284899
 GameObject:
   m_ObjectHideFlags: 0
@@ -871,6 +894,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1684739864}
   m_CullTransparentMesh: 1
+--- !u!114 &1728573278 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1192999126387041320, guid: c7dd9d51635e84e97a3a4ebe7c6e4d8f, type: 3}
+  m_PrefabInstance: {fileID: 1924560746278914132}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1773998152
 GameObject:
   m_ObjectHideFlags: 0
@@ -900,6 +934,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69baaf8f77ad84adc9ee15b5324b96d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nameText: {fileID: 236969631}
+  nicknameText: {fileID: 1728573278}
 --- !u!4 &1773998154
 Transform:
   m_ObjectHideFlags: 0

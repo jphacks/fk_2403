@@ -23,7 +23,7 @@ public class Scene5Manager_M : MonoBehaviour
 
     public float distance = float.MaxValue;
 
-    private const float threshold = 0.0004f;
+    private const float threshold = /*0.0004f*/10000000000000000000;
 
     void Awake()
     {
@@ -57,12 +57,13 @@ public class Scene5Manager_M : MonoBehaviour
                 Debug.Log("aaadayo");
                 //ここの時点で合言葉が一致した二人のユーザが存在することになる
                 string opponentId = "";
-                FirebaseManager.instance.
+                //FirebaseManager.instance.
 
                 StartCoroutine(locationServiceScript_M.StartLocationSystem(passPhrase));
                 StartCoroutine(locationServiceScript_M.DisplayDirections());
                 isSeatch = true;
-            }else
+            }
+            else
             {
                 Debug.Log("あいことばが存在しません");
 
@@ -80,6 +81,8 @@ public class Scene5Manager_M : MonoBehaviour
         if(distance <= threshold)
         {
             //ここで受け取り処理をする.
+            //FirebaseManager.instance.WriteData();
+
             isReceivePanelDisplay = true;
         }
         else
@@ -97,7 +100,7 @@ public class Scene5Manager_M : MonoBehaviour
         inputField = null;
         panel1.SetActive(true);
         panel2.SetActive(false);
-        Debug.Log("clode");
+        Debug.Log("close");
     }
 
     public void OnEndEdit(string s)

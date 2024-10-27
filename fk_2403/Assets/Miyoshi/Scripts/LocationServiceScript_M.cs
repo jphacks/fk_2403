@@ -25,6 +25,8 @@ public class LocationServiceScript_M : MonoBehaviour
     private float opponentLongitude = 130.4463f;
     // Start is called before the first frame update
     private string passPhrase = "";
+
+    private int maxSearchCount = 30;
     void Start()
     {
         Debug.Assert(indicatorPrefab != null && targetCanvas != null && centerPosition != null);
@@ -105,12 +107,14 @@ public class LocationServiceScript_M : MonoBehaviour
         {
             StartCoroutine(GetLocation());
             //ここで相手の座標を取りたい.
-            // FirebaseManager.instance.ReadData($"ExchangeProf/{passPhrase}/{yourID}/latitude", (value) => {
-            //     opponentLatitude = float.Parse(value);
-            // });
-            // FirebaseManager.instance.ReadData($"ExchangeProf/{passPhrase}/{yourID}/longitude", (value) => {
-            //     opponentLongitude = float.Parse(value);
-            // });
+            /*
+            FirebaseManager.instance.ReadData($"ExchangeProf/{passPhrase}/{yourID}/latitude", (value) => {
+                opponentLatitude = float.Parse(value);
+            });
+            FirebaseManager.instance.ReadData($"ExchangeProf/{passPhrase}/{yourID}/longitude", (value) => {
+                opponentLongitude = float.Parse(value);
+            });
+            */
             Vector3 targetPosition = CalculatePosition(opponentLatitude, opponentLongitude);
             Vector3 myPosition = CalculatePosition(myLatitude, myLongitude);
             myTxt.GetComponent<Text>().text = "m:"+myLatitude+", "+myLongitude;
@@ -133,6 +137,12 @@ public class LocationServiceScript_M : MonoBehaviour
                 Destroy(tmp);
                 Debug.Log("tomeru");
                 Scene5Manager_M.instance.isDisplayDirectionsEnd = true;
+                yield break;
+            }
+            maxSearchCount--;
+            if(maxSearchCount < 0)
+            {
+                Destroy(tmp);
                 yield break;
             }
             yield return new WaitForSeconds(1);

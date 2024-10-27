@@ -1,13 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Firebase.Database;
 using Firebase.Extensions;
+using Unity.VisualScripting;
 
 public class Scene7Manager : MonoBehaviour
 {
     private string userUid; // 自分のUIDをここに設定
     private FirebaseManager firebaseManager;
+    [SerializeField] Text nameText;
+    [SerializeField] Text nicknameText;
 
     // Start is called before the first frame update
     void Start()
@@ -24,6 +28,9 @@ public class Scene7Manager : MonoBehaviour
 
         // 自分のUIDの下にあるプロフIDを取得してコンソールに表示
         FetchAndDisplayProfileIds();
+
+        //書いてもらったプロフを表示
+        LoadResultProf();
     }
 
     // 自分のUIDのノードの下にあるプロフIDを取得して表示するメソッド
@@ -101,6 +108,28 @@ public class Scene7Manager : MonoBehaviour
             {
                 Debug.LogError("プロフデータの取得に失敗しました。");
             }
+        });
+    }
+
+    void LoadResultProf(){
+        FirebaseManager.instance.GetAllChildKeys("ProfInfo", (keys) => {
+            foreach(string key in keys){
+                FirebaseManager.instance.ReadData($"ProfInfo/{key}/oppomentUserId", (value) => {
+                    if(!value.Equals(UserDataManager.instance.uid)){
+                        //読み込み
+                        ReadName(key);
+                    }
+                });
+            }
+        });
+    }
+
+    void ReadName(string key){
+        FirebaseManager.instance.ReadData($"ProfInfo/{key}/Name", (value) => {
+            nameText.text = value;
+        });
+        FirebaseManager.instance.ReadData($"ProfInfo/{key}/Nickname", (value) => {
+            nicknameText.text = value;
         });
     }
 }

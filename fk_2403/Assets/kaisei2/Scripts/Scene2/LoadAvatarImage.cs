@@ -40,7 +40,7 @@ public class LoadAvatarImage : MonoBehaviour
             Sprite[] SpriteDatas = Resources.LoadAll<Sprite>(path + "/" + i);
             foreach (Sprite sprite in SpriteDatas)
             {
-                GameObject ins = Instantiate(IconPrefab, parent[i]);
+                GameObject ins = Instantiate(IconPrefab, parent[i]).transform.GetChild(0).gameObject;
                 ins.GetComponent<Image>().sprite = sprite;
                 ins.GetComponent<CostumePath>().SpritePath = path + "/" + i + "/" + sprite.name;
                 ins.GetComponent<CostumePath>().ID = i;

@@ -26,6 +26,8 @@ public class LocationServiceScript_M : MonoBehaviour
     // Start is called before the first frame update
     private string passPhrase = "";
 
+    private string opponentID = "";
+
     private int maxSearchCount = 30;
     void Start()
     {
@@ -39,7 +41,7 @@ public class LocationServiceScript_M : MonoBehaviour
     }
 
 
-    public IEnumerator StartLocationSystem(string passPhrase)
+    public IEnumerator StartLocationSystem()
     {
         //位置情報が拒否されていたら終了.
         if (!Input.location.isEnabledByUser)
@@ -50,7 +52,7 @@ public class LocationServiceScript_M : MonoBehaviour
 
         //開始.
         Input.location.Start();
-        this.passPhrase = passPhrase;
+        
         //開始されるまでに少し時間がかかる,20秒までは待つ.
         int maxWait = 20;
         while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0)
@@ -87,8 +89,8 @@ public class LocationServiceScript_M : MonoBehaviour
             // ここで位置情報が取れる.
             myLatitude = Input.location.lastData.latitude;
             myLongitude = Input.location.lastData.longitude;
-            FirebaseManager.instance.WriteData($"ExchangeProf/{passPhrase}/{UserDataManager.instance.uid}/latitude", myLatitude.ToString());
-            FirebaseManager.instance.WriteData($"ExchangeProf/{passPhrase}/{UserDataManager.instance.uid}/longitude", myLongitude.ToString());
+            FirebaseManager.instance.WriteData($"Communication/{passPhrase}/{UserDataManager.instance.uid}/latitude", myLatitude.ToString());
+            FirebaseManager.instance.WriteData($"Communication/{passPhrase}/{UserDataManager.instance.uid}/longitude", myLongitude.ToString());
             Debug.Log("Location: " + myLatitude + " " + myLongitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp);
         }
 
@@ -107,14 +109,12 @@ public class LocationServiceScript_M : MonoBehaviour
         {
             StartCoroutine(GetLocation());
             //ここで相手の座標を取りたい.
-            /*
-            FirebaseManager.instance.ReadData($"ExchangeProf/{passPhrase}/{yourID}/latitude", (value) => {
+            FirebaseManager.instance.ReadData($"Communication/{passPhrase}/{opponentID}/latitude", (value) => {
                 opponentLatitude = float.Parse(value);
             });
-            FirebaseManager.instance.ReadData($"ExchangeProf/{passPhrase}/{yourID}/longitude", (value) => {
+            FirebaseManager.instance.ReadData($"Communication/{passPhrase}/{opponentID}/longitude", (value) => {
                 opponentLongitude = float.Parse(value);
             });
-            */
             Vector3 targetPosition = CalculatePosition(opponentLatitude, opponentLongitude);
             Vector3 myPosition = CalculatePosition(myLatitude, myLongitude);
             myTxt.GetComponent<Text>().text = "m:"+myLatitude+", "+myLongitude;
@@ -152,5 +152,10 @@ public class LocationServiceScript_M : MonoBehaviour
     private Vector3 CalculatePosition(float latitude, float longitude)
     {
         return new Vector3(longitude, latitude, 0);
+    }
+
+    public void SetInfo(string passPhrase, string opponentID){
+        this.passPhrase = passPhrase;
+        this.opponentID = opponentID;
     }
 }

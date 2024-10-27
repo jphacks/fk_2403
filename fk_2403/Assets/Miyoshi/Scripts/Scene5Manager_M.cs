@@ -23,7 +23,7 @@ public class Scene5Manager_M : MonoBehaviour
 
     public float distance = float.MaxValue;
 
-    private const float threshold = /*0.0004f*/10000000000000000000;
+    public float threshold = /*0.0004f*/10000000000000000000;
 
     void Awake()
     {

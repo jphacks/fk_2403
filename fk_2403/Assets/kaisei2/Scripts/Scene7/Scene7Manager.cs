@@ -114,22 +114,24 @@ public class Scene7Manager : MonoBehaviour
     void LoadResultProf(){
         FirebaseManager.instance.GetAllChildKeys("ProfInfo", (keys) => {
             foreach(string key in keys){
-                FirebaseManager.instance.ReadData($"ProfInfo/{key}/oppomentUserId", (value) => {
-                    if(!value.Equals(UserDataManager.instance.uid)){
-                        //読み込み
-                        ReadName(key);
-                    }
-                });
+                //読み込み
+                ReadName(key);
             }
         });
     }
 
     void ReadName(string key){
         FirebaseManager.instance.ReadData($"ProfInfo/{key}/Name", (value) => {
-            nameText.text = value;
+            if(!value.Equals("NoData")){
+                nameText.text = value;
+            }
+            
         });
         FirebaseManager.instance.ReadData($"ProfInfo/{key}/Nickname", (value) => {
-            nicknameText.text = value;
+            if(value.Equals("NoData")){
+                nicknameText.text = value;
+            }
+            
         });
     }
 }

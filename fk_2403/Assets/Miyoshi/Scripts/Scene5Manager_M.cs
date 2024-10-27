@@ -11,6 +11,7 @@ public class Scene5Manager_M : MonoBehaviour
     [SerializeField] GameObject inputField;
 
     [SerializeField] LocationServiceScript_M locationServiceScript_M;
+    [SerializeField] GameObject allert;
 
 
     public bool isReceivePanelDisplay = false;
@@ -35,6 +36,7 @@ public class Scene5Manager_M : MonoBehaviour
         Debug.Assert(panel1 != null && panel2 != null && inputField != null && locationServiceScript_M != null);
         instance = this;
         panel2.SetActive(false);
+        allert.SetActive(false);
     }
 
     // Update is called once per frame
@@ -44,6 +46,11 @@ public class Scene5Manager_M : MonoBehaviour
         {
             panel1.SetActive(false);
             panel2.SetActive(true);
+        }
+
+        if(distance <= threshold)
+        {
+            allert.SetActive(false);
         }
     }
 
@@ -111,6 +118,7 @@ public class Scene5Manager_M : MonoBehaviour
         inputField = null;
         panel1.SetActive(true);
         panel2.SetActive(false);
+        allert.SetActive(false);
         Debug.Log("close");
     }
 

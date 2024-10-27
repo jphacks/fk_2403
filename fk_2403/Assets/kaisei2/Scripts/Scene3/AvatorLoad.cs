@@ -5,6 +5,7 @@ using UnityEngine;
 public class AvatorLoad : MonoBehaviour
 {
     // アバターパーツの参照（目、口、眉毛、髪、アクセサリー）
+    [SerializeField] private GameObject avatar;
     [SerializeField] private SpriteRenderer eyes;
     [SerializeField] private SpriteRenderer mouth;
     [SerializeField] private SpriteRenderer eyebrow;
@@ -69,6 +70,7 @@ public class AvatorLoad : MonoBehaviour
     // メインのアバターの方の画像を変更する
     private void ChangeCostumeImage()
     {
+        avatar.SetActive(false);
         string[] paths = tempAvatarStorage.CostumePaths;
 
         // 目のスプライトを変更
@@ -107,5 +109,6 @@ public class AvatorLoad : MonoBehaviour
         }
 
         Debug.Log("アバターのスプライトが変更されました。");
+        avatar.SetActive(true);
     }
 }

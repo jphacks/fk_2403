@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Scene3Manager : MonoBehaviour
@@ -10,7 +11,7 @@ public class Scene3Manager : MonoBehaviour
 
     // Firebaseの初期化を管理するための参照
     private FirebaseManager firebaseManager;
-    private string userId = "0Yg2ntXPZ50afumfzUMTQf4D3p73"; // 実際のユーザーIDを設定してください
+    private string userId; // 実際のユーザーIDを設定してください
 
     // Start is called before the first frame update
     void Start()
@@ -23,6 +24,7 @@ public class Scene3Manager : MonoBehaviour
             return;
         }
 
+        userId = UserDataManager.instance.uid;
         // Firebaseから表示名を読み取って表示
         LoadDisplayNameFromFirebase();
     }
@@ -92,4 +94,15 @@ public class Scene3Manager : MonoBehaviour
             }
         });
     }
+
+    public void onClicked_exchangebutton()
+    {
+        SceneManager.LoadScene("Scene5_M");
+    }
+
+    public void onClicked_promisebutton()
+    {
+        SceneManager.LoadScene("Scene4");
+    }
+
 }

@@ -120,7 +120,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7767711795037444262}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2766709040272711040}
+        m_TargetAssemblyTypeName: footerScript, Assembly-CSharp
+        m_MethodName: onClicked_friendbutton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1535482677759563889
 GameObject:
   m_ObjectHideFlags: 0
@@ -320,7 +332,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7007982799996099888}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2766709040272711040}
+        m_TargetAssemblyTypeName: footerScript, Assembly-CSharp
+        m_MethodName: onClicked_homebutton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &5617832006746441196
 GameObject:
   m_ObjectHideFlags: 0
@@ -520,7 +544,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6437165535170925419}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2766709040272711040}
+        m_TargetAssemblyTypeName: footerScript, Assembly-CSharp
+        m_MethodName: onClicked_writebutton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &5997143781059393213
 GameObject:
   m_ObjectHideFlags: 0
@@ -641,7 +677,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6292135115504721924}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2766709040272711040}
+        m_TargetAssemblyTypeName: footerScript, Assembly-CSharp
+        m_MethodName: onClicked_settingbutton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6055055461120553623
 GameObject:
   m_ObjectHideFlags: 0
@@ -805,6 +853,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7072015181984739295}
+  - component: {fileID: 2766709040272711040}
   m_Layer: 5
   m_Name: footerImage
   m_TagString: Untagged
@@ -836,6 +885,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2766709040272711040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6672375946068510078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4885d8d48692847f0be0ac5a98b024ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7767468030390904434
 GameObject:
   m_ObjectHideFlags: 0

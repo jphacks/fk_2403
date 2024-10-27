@@ -50,7 +50,7 @@ public class Scene5Manager_M : MonoBehaviour
 
         if(distance <= threshold)
         {
-            allert.SetActive(false);
+            allert.SetActive(true);
         }
     }
 

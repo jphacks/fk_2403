@@ -32,4 +32,8 @@ public class Scene2Manager : MonoBehaviour
         loadAvatarImage.tempAvatarStorage.SetUserData();
         SceneManager.LoadScene("Scene3");
     }
+
+    public void OnBackButtonClicked(){
+        SceneManager.LoadScene("Scene3");
+    }
 }

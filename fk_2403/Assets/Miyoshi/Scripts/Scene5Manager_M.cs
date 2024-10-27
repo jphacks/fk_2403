@@ -52,6 +52,10 @@ public class Scene5Manager_M : MonoBehaviour
         {
             allert.SetActive(true);
         }
+        else
+        {
+            allert.SetActive(false);
+        }
     }
 
     public void OnClickSearch()

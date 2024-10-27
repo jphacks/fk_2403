@@ -184,6 +184,31 @@ public class FirebaseManager : MonoBehaviour
         });
     }
 
+    public void GetChildrenNum(string path, System.Action<int> action){
+        FirebaseInitializer.DatabaseReference.Child(path).GetValueAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+                List<string> childKeys = new List<string>();
+
+                // 全ての子要素のキーを取得
+                foreach (DataSnapshot child in snapshot.Children)
+                {
+                    Debug.Log(child.Key);
+                    childKeys.Add(child.Key);
+                }
+
+                action(snapshot.Children.Count());
+                
+            }
+            else
+            {
+                Debug.LogError("Failed to get child keys: " + task.Exception);
+            }
+        });
+    }
+
     void OnDestroy()
     {
         FirebaseInitializer.OnFirebaseInitialized -= CheckConnection;

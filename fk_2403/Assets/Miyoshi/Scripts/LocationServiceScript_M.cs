@@ -13,7 +13,7 @@ public class LocationServiceScript_M : MonoBehaviour
     [SerializeField] GameObject tmp;
     //List<GameObject> indicators = new List<GameObject>();
 
-    //
+    //debug
     [SerializeField] Text myTxt;
     [SerializeField] Text opoTxt;
     [SerializeField] Text disTxt;

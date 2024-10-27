@@ -127,7 +127,14 @@ public class LocationServiceScript_M : MonoBehaviour
             Destroy(tmp);
             tmp = Instantiate(indicatorPrefab);
             tmp.transform.SetParent(targetCanvas.transform, false);
-            tmp.transform.position = centerPosition.transform.position + direction;
+            if(Scene5Manager_M.instance.distance <= Scene5Manager_M.instance.threshold)
+            {
+                tmp.transform.position = centerPosition.transform.position;
+            }
+            else
+            {
+                tmp.transform.position = centerPosition.transform.position + direction;
+            }
             //indicators.Add(tmp);
             //tmp.transform.LookAt(targetPosition);
             Debug.Log("dir");
@@ -143,6 +150,7 @@ public class LocationServiceScript_M : MonoBehaviour
             if(maxSearchCount < 0)
             {
                 Destroy(tmp);
+                Scene5Manager_M.instance.OnClickClose();
                 yield break;
             }
             yield return new WaitForSeconds(1);

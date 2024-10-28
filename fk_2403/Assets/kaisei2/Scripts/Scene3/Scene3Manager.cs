@@ -59,7 +59,7 @@ public class Scene3Manager : MonoBehaviour
         }
 
         // 保存するパス: ユーザーID/dispname
-        string path = $"{userId}/dispname";
+        string path = $"users/{userId}/dispname";
 
         // Firebaseにデータを書き込む
         firebaseManager.WriteData(path, displayName);
@@ -76,7 +76,7 @@ public class Scene3Manager : MonoBehaviour
         }
 
         // 読み取るパス: ユーザーID/dispname
-        string path = $"{userId}/dispname";
+        string path = $"users/{userId}/dispname";
 
         // Firebaseからデータを取得
         firebaseManager.ReadData(path, (result) =>

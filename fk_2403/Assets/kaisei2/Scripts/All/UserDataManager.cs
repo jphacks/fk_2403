@@ -46,25 +46,26 @@ public class UserDataManager : MonoBehaviour
 
     public void SetUsernameToServer(string username)
     {
-        FirebaseManager.instance.WriteData(uid + "/username", username);
+        FirebaseManager.instance.WriteData("users/" + uid + "/username", username);
     }
 
     public void SetAvatarDataToServer(string[] paths)
     {
-        FirebaseManager.instance.WriteData(uid + "/eyes", paths[0]);
-        FirebaseManager.instance.WriteData(uid + "/mouth", paths[1]);
-        FirebaseManager.instance.WriteData(uid + "/eyebrow", paths[2]);
-        FirebaseManager.instance.WriteData(uid + "/hair", paths[3]);
-        FirebaseManager.instance.WriteData(uid + "/accessories", paths[4]);
+        string path = "users/" + uid + "/avatar";
+        FirebaseManager.instance.WriteData($"{path}/eyes", paths[0]);
+        FirebaseManager.instance.WriteData($"{path}/mouth", paths[1]);
+        FirebaseManager.instance.WriteData($"{path}/eyebrow", paths[2]);
+        FirebaseManager.instance.WriteData($"{path}/hair", paths[3]);
+        FirebaseManager.instance.WriteData($"{path}/accessories", paths[4]);
     }
 
     public void SetRecieveProf(string profId)
     {
-        FirebaseManager.instance.WriteData(uid + "/RecieveProf/" + profId, "");
+        FirebaseManager.instance.WriteData("users/" + uid + "/RecieveProf/" + profId, "");
     }
 
     public void SetResultProf(string profId)
     {
-        FirebaseManager.instance.WriteData(uid + "/ResultProf/" + profId, "");
+        FirebaseManager.instance.WriteData("users/" + uid + "/ResultProf/" + profId, "");
     }
 }

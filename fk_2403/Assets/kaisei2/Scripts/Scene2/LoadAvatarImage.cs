@@ -74,7 +74,7 @@ public class LoadAvatarImage : MonoBehaviour
         string[] costumeKeys = { "eyes", "mouth", "eyebrow", "hair", "accessories" };
         for (int i = 0; i < costumeKeys.Length; i++)
         {
-            string path = $"{userId}/{costumeKeys[i]}";
+            string path = $"users/{userId}/avatar/{costumeKeys[i]}";
 
             // FirebaseManagerのReadDataを使用してデータを取得
             int index = i; // forループ内でクロージャを防ぐためにインデックスをローカル変数にコピー

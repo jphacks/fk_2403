@@ -38,7 +38,7 @@ public class AvatorLoad : MonoBehaviour
 
         for (int i = 0; i < totalKeys; i++)
         {
-            string path = $"{userId}/{costumeKeys[i]}";
+            string path = $"users/{userId}/avatar/{costumeKeys[i]}";//$"{userId}/{costumeKeys[i]}";
 
             // FirebaseManagerのReadDataを使用してデータを取得
             int index = i; // forループ内でクロージャを防ぐためにインデックスをローカル変数にコピー

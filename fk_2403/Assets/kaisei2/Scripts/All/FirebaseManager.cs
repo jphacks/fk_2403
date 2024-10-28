@@ -169,6 +169,7 @@ public class FirebaseManager : MonoBehaviour
                 // 全ての子要素のキーを取得
                 foreach (DataSnapshot child in snapshot.Children)
                 {
+                    Debug.Log(child.Key);
                     childKeys.Add(child.Key);
                 }
 

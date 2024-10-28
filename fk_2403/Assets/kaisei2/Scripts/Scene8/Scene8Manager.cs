@@ -2,26 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Firebase.Database;
 using System;
-using Firebase.Extensions;
-using UnityEngine.SceneManagement;
 
 public class Scene8Manager : MonoBehaviour
 {
-    [SerializeField] InputField Inputpassphrases; // 入力フィールド
+    [SerializeField] InputField Inputpassphrases; // 合言葉入力フィールド
     private FirebaseManager firebaseManager;
 
-    public String[] profid = new String[2];
-    public string userUid; // 自分のUIDをここに設定
+    public String[] profid = new string[2];
+    public string userUid; // 自分のUID
 
     [SerializeField] GameObject writepanel;
 
-    // このデータを保存したい
+    // 保存するデータ
     [SerializeField] InputField nameinput;
     [SerializeField] InputField Nickname;
 
-    // Start is called before the first frame update
     void Start()
     {
         // FirebaseManagerのインスタンスを取得
@@ -34,7 +30,6 @@ public class Scene8Manager : MonoBehaviour
         userUid = UserDataManager.instance.uid;
     }
 
-    // 検索ボタンが押されたときの処理
     public void onClicked_searchbutton()
     {
         string passphraseToSearch = Inputpassphrases.text;
@@ -44,12 +39,12 @@ public class Scene8Manager : MonoBehaviour
             return;
         }
 
-        // Firebaseから入力されたパスフレーズを検索
-        CheckIfNodeExistsInFirebase(passphraseToSearch);
+        // Firebaseから入力された合言葉を検索
+        CheckIfPassphraseExists(passphraseToSearch);
     }
 
-    // Firebaseで特定のノードが存在するかを確認し、子オブジェクトのキーを取得
-    private void CheckIfNodeExistsInFirebase(string nodeName)
+    // 合言葉がExchangeProfに存在するか確認
+    private void CheckIfPassphraseExists(string passphrase)
     {
         if (firebaseManager == null)
         {
@@ -59,58 +54,41 @@ public class Scene8Manager : MonoBehaviour
 
         string parentPath = "ExchangeProf";
 
-        FirebaseDatabase.DefaultInstance.GetReference(parentPath).GetValueAsync().ContinueWithOnMainThread(task =>
+        // FirebaseManagerを使用してデータを取得
+        firebaseManager.ReadData($"{parentPath}/{passphrase}", (result) =>
         {
-            if (task.IsCompleted)
+            if (!string.IsNullOrEmpty(result) && result != "NoData")
             {
-                DataSnapshot snapshot = task.Result;
-                if (snapshot.HasChild(nodeName))
+                // 合言葉が存在した場合
+                Debug.Log($"合言葉 '{passphrase}' が見つかりました。");
+
+                // writepanelを表示
+                writepanel.SetActive(true);
+
+                // 取得したプロフIDを確認
+                firebaseManager.GetAllChildKeys($"{parentPath}/{passphrase}", (keys) =>
                 {
-                    Debug.Log($"ノード '{nodeName}' が見つかりました。");
-
-                    DataSnapshot nodeSnapshot = snapshot.Child(nodeName);
-                    List<string> childKeys = new List<string>();
-                    foreach (DataSnapshot child in nodeSnapshot.Children)
+                    if (keys.Length == 2)
                     {
-                        childKeys.Add(child.Key);
-                    }
+                        profid[0] = keys[0];
+                        profid[1] = keys[1];
 
-                    if (childKeys.Count > 0)
-                    {
-                        int i = 0;
-                        foreach (string key in childKeys)
-                        {
-                            profid[i] = key;
-                            i++;
-                            Debug.Log($"キー: {key}");
-                        }
-
+                        // 次のステップ：ProfInfoノードを確認
                         CheckProfInfoNodes(profid);
                     }
                     else
                     {
-                        Debug.Log($"'{nodeName}' には子オブジェクトがありません。");
+                        Debug.LogWarning("2つのプロフIDが見つかりませんでした。");
                     }
-
-                    if (!string.IsNullOrEmpty(profid[0]))
-                    {
-                        Debug.Log("プロフ帳を表示します。");
-                        writepanel.SetActive(true);
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning($"ノード '{nodeName}' は存在しません。");
-                }
+                });
             }
             else
             {
-                Debug.LogError("データの取得に失敗しました。");
+                Debug.LogWarning($"合言葉 '{passphrase}' が存在しません。");
             }
         });
     }
 
-    // ProfInfoノードでprofidをチェックし、oppomentUserIdが自分のUIDと一致するか確認
     private void CheckProfInfoNodes(string[] profids)
     {
         if (firebaseManager == null)
@@ -119,53 +97,40 @@ public class Scene8Manager : MonoBehaviour
             return;
         }
 
-        string profInfoPath = "ProfInfo";
-
         foreach (string id in profids)
         {
             if (string.IsNullOrEmpty(id)) continue;
 
-            FirebaseDatabase.DefaultInstance.GetReference(profInfoPath).Child(id).GetValueAsync().ContinueWithOnMainThread(task =>
+            string path = $"ProfInfo/{id}";
+            firebaseManager.ReadData(path, (result) =>
             {
-                if (task.IsCompleted)
+                // UIDが一致するかを確認
+                string oppomentUserId = ExtractOppomentUserId(result);
+                if (oppomentUserId == userUid)
                 {
-                    DataSnapshot snapshot = task.Result;
-                    if (snapshot.Exists)
-                    {
-                        string oppomentUserId = snapshot.Child("oppomentUserId").Value?.ToString();
-                        if (oppomentUserId == userUid)
-                        {
-                            Debug.Log($"ProfInfoに '{id}' が見つかり、UIDが一致しました: {oppomentUserId}");
-                            DisplayMatchingProfile(id);
-                        }
-                        else
-                        {
-                            Debug.LogWarning($"ProfInfoに '{id}' が見つかりましたが、UIDが一致しません。");
-                        }
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"ProfInfoに '{id}' は見つかりませんでした。");
-                    }
-                }
-                else
-                {
-                    Debug.LogError("ProfInfoのデータの取得に失敗しました。");
+                    Debug.Log($"自分のUIDと一致するプロフIDが見つかりました: {id}");
+                    DisplayMatchingProfile(id);
                 }
             });
         }
     }
 
-    // 一致するプロフIDの処理
+    private string ExtractOppomentUserId(string jsonResult)
+    {
+        return jsonResult;
+    }
+
     private void DisplayMatchingProfile(string profId)
     {
         Debug.Log($"一致するプロフID: {profId}");
 
         // 一致するprofIdを保存処理で利用するために一時的に保存
         this.profid[0] = profId;
+
+        // 書き込みパネルを表示
+        writepanel.SetActive(true);
     }
 
-    // 保存ボタンが押されたときの処理
     public void onClicked_savebutton()
     {
         if (string.IsNullOrEmpty(profid[0]))
@@ -174,11 +139,10 @@ public class Scene8Manager : MonoBehaviour
             return;
         }
 
-        // 入力フィールドのデータを保存
+        // 入力データを保存
         SaveProfileData(profid[0]);
     }
 
-    // 入力フィールドのデータをFirebaseに保存
     private void SaveProfileData(string profId)
     {
         if (firebaseManager == null)
@@ -191,34 +155,8 @@ public class Scene8Manager : MonoBehaviour
         string name = nameinput.text;
         string nickname = Nickname.text;
 
-        // 入力フィールドのオブジェクト名をキーとして使用
-        string nameKey = nameinput.gameObject.name;
-        string nicknameKey = Nickname.gameObject.name;
-
-        // Firebaseにデータを保存
-        DatabaseReference profRef = FirebaseDatabase.DefaultInstance.GetReference("ProfInfo").Child(profId);
-        profRef.Child(nameKey).SetValueAsync(name).ContinueWithOnMainThread(task =>
-        {
-            if (task.IsCompleted)
-            {
-                Debug.Log($"名前 '{name}' が '{nameKey}' キーとして保存されました。");
-            }
-            else
-            {
-                Debug.LogError("名前の保存に失敗しました。");
-            }
-        });
-
-        profRef.Child(nicknameKey).SetValueAsync(nickname).ContinueWithOnMainThread(task =>
-        {
-            if (task.IsCompleted)
-            {
-                Debug.Log($"ニックネーム '{nickname}' が '{nicknameKey}' キーとして保存されました。");
-            }
-            else
-            {
-                Debug.LogError("ニックネームの保存に失敗しました。");
-            }
-        });
+        // FirebaseManager経由でデータを保存
+        firebaseManager.WriteData($"ProfInfo/{profId}/Name", name);
+        firebaseManager.WriteData($"ProfInfo/{profId}/Nickname", nickname);
     }
 }

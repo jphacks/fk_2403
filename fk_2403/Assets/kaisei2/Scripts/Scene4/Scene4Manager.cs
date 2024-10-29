@@ -21,34 +21,58 @@ public class Scene4Manager : MonoBehaviour
         string datetime = datetime_input.text;
         SetPassphrase("ExchangeProf/" + passphrase, passphrase, () =>
         {
-            FirebaseManager.instance.AddAutoID("ExchangeProf/" + passphrase, (value) =>
+            if (isNewCreate)
             {
-                if (isNewCreate)
+                //ユーザIDに合言葉を紐付け
+                FirebaseManager.instance.WriteData($"users/{UserDataManager.instance.uid}/linkedPassphrase/{passphrase}", "");
+
+                FirebaseManager.instance.AddAutoID("ExchangeProf/" + passphrase, (value) =>
                 {
+                    //まずは自分側のプロフをつくる
                     FirebaseManager.instance.WriteData("ProfInfo/" + value + "/profbase", profIndex.ToString());
                     FirebaseManager.instance.WriteData("ProfInfo/" + value + "/seal", 0.ToString());
                     FirebaseManager.instance.WriteData("ProfInfo/" + value + "/datetimeMemo", datetime);
                     FirebaseManager.instance.WriteData("ProfInfo/" + value + "/ownerId", UserDataManager.instance.uid);
+                    //相手のIDがわからないので自分のIDを自分のプロフに書いて終わり
 
-                    //ユーザIDにプロフIDを紐付け
-                    FirebaseManager.instance.WriteData($"users/{UserDataManager.instance.uid}/heldProfiles/{value}", "");
-                    FirebaseManager.instance.WriteData($"users/{UserDataManager.instance.uid}/linkedPassphrase/{passphrase}", "");
-                }
-                else
+                });
+            }
+            else
+            {
+                //ユーザIDに合言葉を紐付け
+                FirebaseManager.instance.WriteData($"users/{UserDataManager.instance.uid}/linkedPassphrase/{passphrase}", "");
+
+                FirebaseManager.instance.GetAllChildKeys("ExchangeProf/" + passphrase, (str) =>
                 {
-                    FirebaseManager.instance.WriteData("ProfInfo/" + value + "/profbase", profIndex.ToString());
-                    FirebaseManager.instance.WriteData("ProfInfo/" + value + "/seal", 0.ToString());
-                    FirebaseManager.instance.WriteData("ProfInfo/" + value + "/oppomentUserId", UserDataManager.instance.uid);//アバターを表示する方
-                    FirebaseManager.instance.WriteData("ProfInfo/" + value + "/datetimeMemo", datetime);
+                    //相手のプロフIDを受け取る　＝＞　str
 
-                    //ユーザIDにプロフIDを紐付け
-                    FirebaseManager.instance.WriteData($"users/{UserDataManager.instance.uid}/heldProfiles/{value}", "");
-                    FirebaseManager.instance.WriteData($"users/{UserDataManager.instance.uid}/linkedPassphrase/{passphrase}", "");
+                    //相手側のプロフに自分のIDを書き込む
+                    FirebaseManager.instance.WriteData("ProfInfo/" + str[0] + "/oppomentId", UserDataManager.instance.uid);
+                    //ユーザIDに相手のプロフIDを紐付け
+                    FirebaseManager.instance.WriteData($"users/{UserDataManager.instance.uid}/heldProfiles/{str[0]}", "");
 
-                }
+                    //相手側のプロフ経由で相手のユーザIDを取得
+                    FirebaseManager.instance.ReadData("ProfInfo/" + str[0] + "/ownerId", (oppomentId) =>
+                    {
+                        FirebaseManager.instance.AddAutoID("ExchangeProf/" + passphrase, (value) =>
+                        {
+                            //自分側のプロフをつくる
+                            FirebaseManager.instance.WriteData("ProfInfo/" + value + "/profbase", profIndex.ToString());
+                            FirebaseManager.instance.WriteData("ProfInfo/" + value + "/seal", 0.ToString());
+                            FirebaseManager.instance.WriteData("ProfInfo/" + value + "/ownerId", UserDataManager.instance.uid);
+                            //自分のプロフに相手のIDを書き込み
+                            FirebaseManager.instance.WriteData("ProfInfo/" + value + "/oppomentId", oppomentId);
+                            FirebaseManager.instance.WriteData("ProfInfo/" + value + "/datetimeMemo", datetime);
+
+                            //相手のユーザIDに自分のプロフIDを紐付け
+                            FirebaseManager.instance.WriteData($"users/{oppomentId}/heldProfiles/{value}", "");
+                        });
+                        
+                    });
+                });
 
                 
-            });
+            }
             Debug.Log("END");
 
             onClicked_backbutton();

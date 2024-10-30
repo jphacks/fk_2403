@@ -60,7 +60,6 @@ public class Scene5Manager_M : MonoBehaviour
 
     public void OnClickSearch()
     {
-        Debug.Log("Searchclicked:"+passPhrase);
         if(passPhrase == null) return;//壊れたら怖いのでチェック.挙動に問題がないなら消していい.
         FirebaseManager.instance.ReadData("ExchangeProf/"+passPhrase, (value) => {
             if(!value.Equals("NoData"))//合言葉が存在したら.//仮置きaaa.
@@ -88,7 +87,6 @@ public class Scene5Manager_M : MonoBehaviour
             }else
             {
                 Debug.Log("あいことばが存在しません");
-
             }
             
         });
@@ -129,6 +127,5 @@ public class Scene5Manager_M : MonoBehaviour
     public void OnEndEdit(string s)
     {
         passPhrase = s;
-        Debug.Log("passPhraseSet"+passPhrase);
     }
 }

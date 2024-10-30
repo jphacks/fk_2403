@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using PyxisInt.GeographicLib;
 
 public class LocationServiceScript_M : MonoBehaviour
 {
@@ -17,18 +18,24 @@ public class LocationServiceScript_M : MonoBehaviour
     [SerializeField] Text myTxt;
     [SerializeField] Text opoTxt;
     [SerializeField] Text disTxt;
+    [SerializeField] Text distanceTxt;
     //
+
+    private const bool _debug = true;
 
     private float myLatitude;
     private float myLongitude;
-    private float opponentLatitude = float.MaxValue/*33.67161f*/;
-    private float opponentLongitude = float.MaxValue/*130.4463f*/;
-    // Start is called before the first frame update
-    private string passPhrase = "";
+    private float opponentLatitude = _debug?33.67161f:float.MaxValue;
+    private float opponentLongitude = _debug?130.4463f:float.MaxValue;
 
+    private string passPhrase = "";
     private string opponentID = "";
 
     private int maxSearchCount = 30;
+
+    //位置情報から2点間の距離を求めるため,Geodesicを使います,(楕円体の赤道半径:6378137. 楕円体の扁平率:1 / 298.257222101)
+    Geodesic geodesic = new Geodesic(6378137, 1 / 298.257222101);
+    // Start is called before the first frame update
     void Start()
     {
         Debug.Assert(indicatorPrefab != null && Canvas != null && centerPosition != null);
@@ -124,6 +131,11 @@ public class LocationServiceScript_M : MonoBehaviour
             //opoTxt.GetComponent<Text>().text = "o:"+opponentLatitude+", "+opponentLongitude;
             //Debug.Log(Mathf.Sqrt((targetPosition.x-myPosition.x)*(targetPosition.x-myPosition.x)+(targetPosition.y-myPosition.y)*(targetPosition.y-myPosition.y)));
             Scene5Manager_M.instance.distance = Mathf.Sqrt((targetPosition.x-myPosition.x)*(targetPosition.x-myPosition.x)+(targetPosition.y-myPosition.y)*(targetPosition.y-myPosition.y));
+
+            GeodesicData gDistance = geodesic.Inverse(myLatitude, myLongitude, opponentLatitude, opponentLongitude);
+            Debug.Log(gDistance.Distance);
+            distanceTxt.GetComponent<Text>().text = "distance:" + gDistance + " m";
+
             //disTxt.GetComponent<Text>().text = "d:"+Scene5Manager_M.instance.distance;
             Vector3 distance = (targetPosition - myPosition).normalized;
             distance *= 1.5f;//mapのサイズに合わせて調整.

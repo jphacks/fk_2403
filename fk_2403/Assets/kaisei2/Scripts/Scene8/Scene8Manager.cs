@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System;
 
@@ -21,6 +22,8 @@ public class Scene8Manager : MonoBehaviour
     [SerializeField] Transform parent;
     [SerializeField] GameObject userIconPrefab;
 
+    List <Dictionary<string, object>> dicList = new List<Dictionary<string, object>>();
+
     void Start()
     {
         // FirebaseManagerのインスタンスを取得
@@ -32,47 +35,51 @@ public class Scene8Manager : MonoBehaviour
 
         userUid = UserDataManager.instance.uid;
 
-        Invoke("DisplayheldProfiles", 2f);
+        Invoke("DisplayheldProfiles", 0.5f);
+        Invoke("SetHeldProfiles", 1f);
     }
 
     //自分が書き込むプロフを一覧表示する
     public void DisplayheldProfiles()
     {
-        
+
+        SetUserIcon setUserIcon;
         FirebaseManager.instance.GetAllChildKeys($"users/{userUid}/heldProfiles", (keys) =>
         {
             foreach (string profId in keys)
             {
+                //ボタン生成
+                GameObject ins = Instantiate(userIconPrefab, parent);
+                setUserIcon = ins.GetComponent<SetUserIcon>();
+                ins.transform.Find("Button (Legacy)").GetComponent<Button>().onClick.AddListener(() =>
+                {
+                    DisplayMatchingProfile(profId, setUserIcon.index);
+                    profid[0] = profId;
+                });
+
+            }
+        });
+    }
+
+    void SetHeldProfiles()
+    {
+        FirebaseManager.instance.GetAllChildKeys($"users/{userUid}/heldProfiles", (keys) =>
+        {
+            foreach (string profId in keys)
+            {
+                
                 FirebaseManager.instance.GetAllDataFromServer($"ProfInfo/{profId}", (dic) =>
                 {
-
-                    // 取得したデータを表示
-                    foreach (KeyValuePair<string, object> entry in dic)
+                    dicList.Add(dic);
+                    FirebaseManager.instance.ReadData($"users/{dic["oppomentId"].ToString()}/dispname", (value) =>
                     {
-                        Debug.Log($"Key: {entry.Key}, Value: {entry.Value}");
-                    }
-                    string oppomentDispName = "";
-                    string passphrase = dic["passPhrase"].ToString();
-                    string datatimeMemo = dic["datetimeMemo"].ToString();
-                    GameObject ins = Instantiate(userIconPrefab, parent);
-                    Debug.Log(ins.name);
-                    SetUserIcon setUserIcon = ins.GetComponent<SetUserIcon>();
-                    setUserIcon.profId = profId;
-                    ins.GetComponent<Button>().onClick.AddListener(() =>
-                    {
-                        DisplayMatchingProfile(setUserIcon.profId);
-                        profid[0] = profId;
+                        parent.transform.GetChild(0).gameObject.GetComponent<SetUserIcon>().OnSet(
+                        value, dic["datetimeMemo"].ToString(), dic["passphrase"].ToString(), dicList.IndexOf(dic));
                     });
-
-                    FirebaseManager.instance.ReadData($"users/{dic["oppomentId"]}/dispname", (value) =>
-                    {
-                        oppomentDispName = value;
-                        setUserIcon.OnSet(oppomentDispName, datatimeMemo, passphrase);
-                    });
-
 
                 });
                 
+
             }
         });
     }
@@ -167,7 +174,7 @@ public class Scene8Manager : MonoBehaviour
         return jsonResult;
     }
 
-    private void DisplayMatchingProfile(string profId)
+    private void DisplayMatchingProfile(string profId, int index = -1)
     {
         Debug.Log($"一致するプロフID: {profId}");
 
@@ -176,6 +183,14 @@ public class Scene8Manager : MonoBehaviour
 
         // 書き込みパネルを表示
         writepanel.SetActive(true);
+
+        if (index != -1)
+        {
+            Debug.Log(index);
+            nameinput.text = dicList[index]["Name"].ToString();
+            Nickname.text = dicList[index]["Nickname"].ToString();
+        }
+        
     }
 
     public void onClicked_savebutton()
@@ -188,6 +203,7 @@ public class Scene8Manager : MonoBehaviour
 
         // 入力データを保存
         SaveProfileData(profid[0]);
+        SceneManager.LoadScene("Scene3");
     }
 
     private void SaveProfileData(string profId)

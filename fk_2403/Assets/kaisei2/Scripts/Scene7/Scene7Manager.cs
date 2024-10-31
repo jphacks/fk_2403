@@ -41,7 +41,7 @@ public class Scene7Manager : MonoBehaviour
         }
 
         // UIDノードのパスを指定
-        string userProfilePath = $"UserProfiles/{userUid}";
+        string userProfilePath = $"users/{userUid}/receivedProfiles";
 
         // Firebaseから自分のUIDの下にあるデータを取得
         FirebaseDatabase.DefaultInstance.GetReference(userProfilePath).GetValueAsync().ContinueWithOnMainThread(task =>

@@ -35,6 +35,9 @@ public class LocationServiceScript_M : MonoBehaviour
 
     //位置情報から2点間の距離を求めるため,Geodesicを使います,(楕円体の赤道半径:6378137. 楕円体の扁平率:1 / 298.257222101)
     Geodesic geodesic = new Geodesic(6378137, 1 / 298.257222101);
+
+    private bool isApplicationPause = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -99,6 +102,10 @@ public class LocationServiceScript_M : MonoBehaviour
             myLatitude = Input.location.lastData.latitude;
             myLongitude = Input.location.lastData.longitude;
             //取ったら書き込む.
+            if(isApplicationPause)
+            {
+                myLatitude = myLongitude = float.MaxValue;
+            }
             FirebaseManager.instance.WriteData($"Communication/{passPhrase}/{UserDataManager.instance.uid}/latitude", myLatitude.ToString());
             FirebaseManager.instance.WriteData($"Communication/{passPhrase}/{UserDataManager.instance.uid}/longitude", myLongitude.ToString());
             //Debug.Log("Location: " + myLatitude + " " + myLongitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp);
@@ -108,10 +115,12 @@ public class LocationServiceScript_M : MonoBehaviour
         //Input.location.Stop();//他で終了させる.
     }
 
+    /*
     private double GetLocationDistance(float latitude1, float longtitude1, float latitude2, float longtitude2)
     {
         return Mathf.Sqrt((latitude2 - latitude1) * (latitude2 - latitude1) + (longtitude2 - longtitude1) * (longtitude2 - longtitude1));
     }
+    */
 
     public IEnumerator DisplayDirections()
     {
@@ -168,7 +177,7 @@ public class LocationServiceScript_M : MonoBehaviour
                 Scene5Manager_M.instance.OnClickClose();
                 yield break;
             }
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(3);
         }
     }
 
@@ -180,5 +189,10 @@ public class LocationServiceScript_M : MonoBehaviour
     public void SetInfo(string passPhrase, string opponentID){
         this.passPhrase = passPhrase;
         this.opponentID = opponentID;
+    }
+
+    private void OnApplicationPause(bool pause)
+    {
+        isApplicationPause = pause;
     }
 }

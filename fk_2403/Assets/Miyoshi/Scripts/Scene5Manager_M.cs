@@ -6,6 +6,7 @@ using UnityEngine;
 public class Scene5Manager_M : MonoBehaviour
 {
     public static Scene5Manager_M instance;
+
     [SerializeField] GameObject panel1;
     [SerializeField] GameObject panel2;
     [SerializeField] GameObject inputField;
@@ -20,16 +21,12 @@ public class Scene5Manager_M : MonoBehaviour
 
     private bool isSeatch = false;
 
-    public string passPhrase = null;
+    private string passPhrase = null;
 
     public float distance = float.MaxValue;
 
     public float threshold = /*0.0004f*/10000000000000000000;
 
-    void Awake()
-    {
-        instance = this;
-    }
     // Start is called before the first frame update
     void Start()
     {
@@ -64,7 +61,6 @@ public class Scene5Manager_M : MonoBehaviour
         FirebaseManager.instance.ReadData("ExchangeProf/"+passPhrase, (value) => {
             if(!value.Equals("NoData"))//合言葉が存在したら.//仮置きaaa.
             {
-                Debug.Log("aaadayo");
                 //ここの時点で合言葉が一致した二人のユーザが存在することになる
                 string opponentId = "";
                 FirebaseManager.instance.GetAllChildKeys("ExchangeProf/"+passPhrase, (strArray) => {
@@ -84,7 +80,8 @@ public class Scene5Manager_M : MonoBehaviour
                 });
 
                 
-            }else
+            }
+            else
             {
                 Debug.Log("あいことばが存在しません");
             }

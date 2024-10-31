@@ -114,6 +114,41 @@ public class FirebaseManager : MonoBehaviour
         action(result);
     }
 
+    public void GetAllDataFromServer(string path, System.Action<Dictionary<string, object>> action)
+    {
+        // path のデータをまとめて取得
+        FirebaseInitializer.DatabaseReference.Child(path).GetValueAsync()
+            .ContinueWithOnMainThread(task => {
+                if (task.IsCompleted)
+                {
+                    DataSnapshot snapshot = task.Result;
+
+                    // データが存在する場合、Dictionaryに変換
+                    if (snapshot.Exists)
+                    {
+                        Dictionary<string, object> profileInfo = new Dictionary<string, object>();
+
+                        foreach (DataSnapshot childSnapshot in snapshot.Children)
+                        {
+                            profileInfo[childSnapshot.Key] = childSnapshot.Value;
+                        }
+
+                        
+
+                        action(profileInfo);
+                    }
+                    else
+                    {
+                        Debug.Log("No profileInfo found.");
+                    }
+                }
+                else
+                {
+                    Debug.LogError("Failed to read profileInfo: " + task.Exception);
+                }
+            });
+    }
+
     private async Task WaitForFirebaseInitialization()
     {
         while (FirebaseInitializer.DatabaseReference == null)

@@ -2,6 +2,7 @@ using Firebase.Database;
 using Firebase.Extensions;
 using UnityEngine;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 public class FirebaseReader : MonoBehaviour
 {
@@ -35,4 +36,5 @@ public class FirebaseReader : MonoBehaviour
         }
         return rtnStr;
     }
+
 }

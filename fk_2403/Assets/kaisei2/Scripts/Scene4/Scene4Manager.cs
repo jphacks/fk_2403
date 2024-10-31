@@ -33,6 +33,7 @@ public class Scene4Manager : MonoBehaviour
                     FirebaseManager.instance.WriteData("ProfInfo/" + value + "/seal", 0.ToString());
                     FirebaseManager.instance.WriteData("ProfInfo/" + value + "/datetimeMemo", datetime);
                     FirebaseManager.instance.WriteData("ProfInfo/" + value + "/ownerId", UserDataManager.instance.uid);
+                    FirebaseManager.instance.WriteData("ProfInfo/" + value + "/passphrase", passphrase);
                     //相手のIDがわからないので自分のIDを自分のプロフに書いて終わり
 
                 });
@@ -60,6 +61,7 @@ public class Scene4Manager : MonoBehaviour
                             FirebaseManager.instance.WriteData("ProfInfo/" + value + "/profbase", profIndex.ToString());
                             FirebaseManager.instance.WriteData("ProfInfo/" + value + "/seal", 0.ToString());
                             FirebaseManager.instance.WriteData("ProfInfo/" + value + "/ownerId", UserDataManager.instance.uid);
+                            FirebaseManager.instance.WriteData("ProfInfo/" + value + "/passphrase", passphrase);
                             //自分のプロフに相手のIDを書き込み
                             FirebaseManager.instance.WriteData("ProfInfo/" + value + "/oppomentId", oppomentId);
                             FirebaseManager.instance.WriteData("ProfInfo/" + value + "/datetimeMemo", datetime);
@@ -103,6 +105,11 @@ public class Scene4Manager : MonoBehaviour
                 {
                     action();
                 }
+                else
+                {
+                    error("すでに合言葉が存在しています");
+                }
+
             });
             
         }

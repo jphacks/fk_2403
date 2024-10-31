@@ -18,6 +18,9 @@ public class Scene8Manager : MonoBehaviour
     [SerializeField] InputField nameinput;
     [SerializeField] InputField Nickname;
 
+    [SerializeField] Transform parent;
+    [SerializeField] GameObject userIconPrefab;
+
     void Start()
     {
         // FirebaseManagerのインスタンスを取得
@@ -28,6 +31,50 @@ public class Scene8Manager : MonoBehaviour
         }
 
         userUid = UserDataManager.instance.uid;
+
+        Invoke("DisplayheldProfiles", 2f);
+    }
+
+    //自分が書き込むプロフを一覧表示する
+    public void DisplayheldProfiles()
+    {
+        
+        FirebaseManager.instance.GetAllChildKeys($"users/{userUid}/heldProfiles", (keys) =>
+        {
+            foreach (string profId in keys)
+            {
+                FirebaseManager.instance.GetAllDataFromServer($"ProfInfo/{profId}", (dic) =>
+                {
+
+                    // 取得したデータを表示
+                    foreach (KeyValuePair<string, object> entry in dic)
+                    {
+                        Debug.Log($"Key: {entry.Key}, Value: {entry.Value}");
+                    }
+                    string oppomentDispName = "";
+                    string passphrase = dic["passPhrase"].ToString();
+                    string datatimeMemo = dic["datetimeMemo"].ToString();
+                    GameObject ins = Instantiate(userIconPrefab, parent);
+                    Debug.Log(ins.name);
+                    SetUserIcon setUserIcon = ins.GetComponent<SetUserIcon>();
+                    setUserIcon.profId = profId;
+                    ins.GetComponent<Button>().onClick.AddListener(() =>
+                    {
+                        DisplayMatchingProfile(setUserIcon.profId);
+                        profid[0] = profId;
+                    });
+
+                    FirebaseManager.instance.ReadData($"users/{dic["oppomentId"]}/dispname", (value) =>
+                    {
+                        oppomentDispName = value;
+                        setUserIcon.OnSet(oppomentDispName, datatimeMemo, passphrase);
+                    });
+
+
+                });
+                
+            }
+        });
     }
 
     public void onClicked_searchbutton()

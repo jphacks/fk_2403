@@ -143,7 +143,7 @@ public class LocationServiceScript_M : MonoBehaviour
 
             GeodesicData gDistance = geodesic.Inverse(myLatitude, myLongitude, opponentLatitude, opponentLongitude);
             Debug.Log(gDistance.Distance);
-            distanceTxt.GetComponent<Text>().text = "distance:" + gDistance + " m";
+            distanceTxt.GetComponent<Text>().text = "distance:" + gDistance.Distance + " m";
 
             //disTxt.GetComponent<Text>().text = "d:"+Scene5Manager_M.instance.distance;
             Vector3 distance = (targetPosition - myPosition).normalized;

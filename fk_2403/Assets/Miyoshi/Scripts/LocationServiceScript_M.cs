@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using PyxisInt.GeographicLib;
 
 public class LocationServiceScript_M : MonoBehaviour
 {
     [SerializeField] GameObject indicatorPrefab;//相手のポイント.
-    [SerializeField] Canvas targetCanvas;
+    [SerializeField] Canvas Canvas;
     [SerializeField] GameObject centerPosition;
     [SerializeField] GameObject tmp;
     //List<GameObject> indicators = new List<GameObject>();
@@ -17,21 +18,30 @@ public class LocationServiceScript_M : MonoBehaviour
     [SerializeField] Text myTxt;
     [SerializeField] Text opoTxt;
     [SerializeField] Text disTxt;
+    [SerializeField] Text distanceTxt;
     //
+
+    private const bool _debug = true;
 
     private float myLatitude;
     private float myLongitude;
-    private float opponentLatitude = 33.67161f;
-    private float opponentLongitude = 130.4463f;
-    // Start is called before the first frame update
-    private string passPhrase = "";
+    private float opponentLatitude = _debug?33.67161f:float.MaxValue;
+    private float opponentLongitude = _debug?130.4463f:float.MaxValue;
 
+    private string passPhrase = "";
     private string opponentID = "";
 
     private int maxSearchCount = 30;
+
+    //位置情報から2点間の距離を求めるため,Geodesicを使います,(楕円体の赤道半径:6378137. 楕円体の扁平率:1 / 298.257222101)
+    Geodesic geodesic = new Geodesic(6378137, 1 / 298.257222101);
+
+    private bool isApplicationPause = false;
+
+    // Start is called before the first frame update
     void Start()
     {
-        Debug.Assert(indicatorPrefab != null && targetCanvas != null && centerPosition != null);
+        Debug.Assert(indicatorPrefab != null && Canvas != null && centerPosition != null);
     }
 
     // Update is called once per frame
@@ -74,10 +84,12 @@ public class LocationServiceScript_M : MonoBehaviour
 
     public IEnumerator GetLocation()
     {
+        /*
         if(!Scene5Manager_M.instance.isLocationServiceStart)
         {
             yield return new WaitForSeconds(.1f);
         }
+        */
         // 位置情報が取れたかどうか.
         if (Input.location.status == LocationServiceStatus.Failed)
         {
@@ -89,21 +101,28 @@ public class LocationServiceScript_M : MonoBehaviour
             // ここで位置情報が取れる.
             myLatitude = Input.location.lastData.latitude;
             myLongitude = Input.location.lastData.longitude;
+            //取ったら書き込む.
+            if(isApplicationPause)
+            {
+                myLatitude = myLongitude = float.MaxValue;
+            }
             FirebaseManager.instance.WriteData($"Communication/{passPhrase}/{UserDataManager.instance.uid}/latitude", myLatitude.ToString());
             FirebaseManager.instance.WriteData($"Communication/{passPhrase}/{UserDataManager.instance.uid}/longitude", myLongitude.ToString());
-            Debug.Log("Location: " + myLatitude + " " + myLongitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp);
+            //Debug.Log("Location: " + myLatitude + " " + myLongitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp);
         }
 
         //位置情報の取得を終了.
         //Input.location.Stop();//他で終了させる.
     }
 
+    /*
     private double GetLocationDistance(float latitude1, float longtitude1, float latitude2, float longtitude2)
     {
         return Mathf.Sqrt((latitude2 - latitude1) * (latitude2 - latitude1) + (longtitude2 - longtitude1) * (longtitude2 - longtitude1));
     }
+    */
 
-    public IEnumerator DisplayDirections(/*float myLatitude, float myLongitude, *//*float opponentLatitude, float opponentLongitude*/)
+    public IEnumerator DisplayDirections()
     {
         while (true)
         {
@@ -117,28 +136,30 @@ public class LocationServiceScript_M : MonoBehaviour
             });
             Vector3 targetPosition = CalculatePosition(opponentLatitude, opponentLongitude);
             Vector3 myPosition = CalculatePosition(myLatitude, myLongitude);
-            myTxt.GetComponent<Text>().text = "m:"+myLatitude+", "+myLongitude;
-            opoTxt.GetComponent<Text>().text = "o:"+opponentLatitude+", "+opponentLongitude;
+            //myTxt.GetComponent<Text>().text = "m:"+myLatitude+", "+myLongitude;
+            //opoTxt.GetComponent<Text>().text = "o:"+opponentLatitude+", "+opponentLongitude;
             //Debug.Log(Mathf.Sqrt((targetPosition.x-myPosition.x)*(targetPosition.x-myPosition.x)+(targetPosition.y-myPosition.y)*(targetPosition.y-myPosition.y)));
             Scene5Manager_M.instance.distance = Mathf.Sqrt((targetPosition.x-myPosition.x)*(targetPosition.x-myPosition.x)+(targetPosition.y-myPosition.y)*(targetPosition.y-myPosition.y));
-            disTxt.GetComponent<Text>().text = "d:"+Scene5Manager_M.instance.distance;
-            Vector3 direction = (targetPosition - myPosition).normalized;
-            direction *= 1.5f;//mapのサイズに合わせて調整.
+
+            GeodesicData gDistance = geodesic.Inverse(myLatitude, myLongitude, opponentLatitude, opponentLongitude);
+            Debug.Log(gDistance.Distance);
+            distanceTxt.GetComponent<Text>().text = "distance:" + gDistance + " m";
+
+            //disTxt.GetComponent<Text>().text = "d:"+Scene5Manager_M.instance.distance;
+            Vector3 distance = (targetPosition - myPosition).normalized;
+            distance *= 1.5f;//mapのサイズに合わせて調整.
             Destroy(tmp);
             tmp = Instantiate(indicatorPrefab);
-            tmp.transform.SetParent(targetCanvas.transform, false);
+            tmp.transform.SetParent(Canvas.transform, false);
             if(Scene5Manager_M.instance.distance <= Scene5Manager_M.instance.threshold)
             {
                 tmp.transform.position = centerPosition.transform.position;
             }
             else
             {
-                tmp.transform.position = centerPosition.transform.position + direction;
+                tmp.transform.position = centerPosition.transform.position + distance;
             }
-            //indicators.Add(tmp);
-            //tmp.transform.LookAt(targetPosition);
             Debug.Log("dir");
-            GetLocation();
             if (Scene5Manager_M.instance.isReceivePanelDisplay)
             {
                 Destroy(tmp);
@@ -149,11 +170,14 @@ public class LocationServiceScript_M : MonoBehaviour
             maxSearchCount--;
             if(maxSearchCount < 0)
             {
+                //ユーザー側が合言葉検索途中でシーンや画面を離れることは想定していない.
+                FirebaseManager.instance.WriteData($"Communication/{passPhrase}/{UserDataManager.instance.uid}/latitude", float.MaxValue.ToString());
+                FirebaseManager.instance.WriteData($"Communication/{passPhrase}/{UserDataManager.instance.uid}/longitude", float.MaxValue.ToString());
                 Destroy(tmp);
                 Scene5Manager_M.instance.OnClickClose();
                 yield break;
             }
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(3);
         }
     }
 
@@ -165,5 +189,10 @@ public class LocationServiceScript_M : MonoBehaviour
     public void SetInfo(string passPhrase, string opponentID){
         this.passPhrase = passPhrase;
         this.opponentID = opponentID;
+    }
+
+    private void OnApplicationPause(bool pause)
+    {
+        isApplicationPause = pause;
     }
 }

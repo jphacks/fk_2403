@@ -12,6 +12,8 @@ public class Scene7Manager : MonoBehaviour
     private FirebaseManager firebaseManager;
     [SerializeField] Text nameText;
     [SerializeField] Text nicknameText;
+    List<string> profList = new List<string>();
+    int index;
 
     // Start is called before the first frame update
     void Start()
@@ -27,7 +29,9 @@ public class Scene7Manager : MonoBehaviour
         userUid = UserDataManager.instance.uid;
 
         // 自分のUIDの下にあるプロフIDを取得してコンソールに表示
-        FetchAndDisplayProfileIds();
+        //FetchAndDisplayProfileIds();
+
+        Invoke("AddList", 0.5f);
 
     }
 
@@ -109,14 +113,29 @@ public class Scene7Manager : MonoBehaviour
         });
     }
 
-    public void LoadResultProf(){
-        FirebaseManager.instance.GetAllChildKeys("ProfInfo", (keys) => {
-            foreach(string key in keys){
-                Debug.Log(key);
-                //読み込み
-                ReadName(key);
-            }
+    public void AddList()
+    {
+        FirebaseManager.instance.GetAllChildKeys($"users/{userUid}/receivedProfiles", (keys) =>
+        {
+            profList.AddRange(keys);
         });
+    }
+
+
+    public void LoadResultProf()
+    {
+        FirebaseManager.instance.GetAllDataFromServer($"ProfInfo/{profList[index]}", (datas) =>
+        {
+            nameText.text = datas["Name"].ToString();
+            nicknameText.text = datas["Nickname"].ToString();
+        });
+        //FirebaseManager.instance.GetAllChildKeys("ProfInfo", (keys) => {
+        //    foreach(string key in keys){
+        //        Debug.Log(key);
+        //        //読み込み
+        //        ReadName(key);
+        //    }
+        //});
     }
 
     void ReadName(string key){
@@ -132,5 +151,19 @@ public class Scene7Manager : MonoBehaviour
             }
             
         });
+    }
+
+    public void buttonclicked(int i)
+    {
+        index += i;
+        if (index < 0)
+        {
+            index = profList.Count;
+        }
+
+        if (index > profList.Count)
+        {
+            index = 0;
+        }
     }
 }

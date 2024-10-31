@@ -71,7 +71,7 @@ public class Scene8Manager : MonoBehaviour
                 FirebaseManager.instance.GetAllDataFromServer($"ProfInfo/{profId}", (dic) =>
                 {
                     dicList.Add(dic);
-                    FirebaseManager.instance.ReadData($"users/{dic["oppomentId"].ToString()}/dispname", (value) =>
+                    FirebaseManager.instance.ReadData($"users/{dic["ownerId"].ToString()}/dispname", (value) =>
                     {
                         parent.transform.GetChild(0).gameObject.GetComponent<SetUserIcon>().OnSet(
                         value, dic["datetimeMemo"].ToString(), dic["passphrase"].ToString(), dicList.IndexOf(dic));

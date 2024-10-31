@@ -198,6 +198,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1262033619354092948, guid: d43c6d342f9cd495280285ea41165642, type: 3}
+      propertyPath: uid
+      value: 1GM1PJKADjgfctkZ6wxsUQ6YI7r2
+      objectReference: {fileID: 0}
     - target: {fileID: 3161041321887358776, guid: d43c6d342f9cd495280285ea41165642, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.24810538
@@ -2711,9 +2715,10 @@ MonoBehaviour:
   isReceivePanelDisplay: 0
   isDisplayDirectionsEnd: 0
   isLocationServiceStart: 0
-  passPhrase: 
   distance: 3.4028235e+38
   threshold: 1e+19
+  receivedOpponentProfileID: 
+  receivedMyProfileID: 
 --- !u!114 &1530501268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2727,7 +2732,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   indicatorPrefab: {fileID: 2707907697952085070, guid: 08f5e3df0457049ecb19e4c9e0c1cf35, type: 3}
-  Canvas: {fileID: 0}
+  Canvas: {fileID: 904870666}
   centerPosition: {fileID: 3599590551223442236}
   tmp: {fileID: 0}
   myTxt: {fileID: 323837260}

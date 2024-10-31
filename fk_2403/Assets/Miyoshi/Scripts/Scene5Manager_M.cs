@@ -39,7 +39,11 @@ public class Scene5Manager_M : MonoBehaviour
         instance = this;
         panel2.SetActive(false);
         allert.SetActive(false);
+
+        passPhrase = "ちこりーた";
+        Invoke("GetProfID", 2f);
         
+
     }
 
     // Update is called once per frame
@@ -80,6 +84,7 @@ public class Scene5Manager_M : MonoBehaviour
 
                     Debug.Log("kakuninnyou:"+opponentId);//ココまではok
                     GetProfID();
+                    Invoke("GetMyRecieveProfID", 2f);
                     locationServiceScript_M.SetInfo(passPhrase, opponentId);
                     StartCoroutine(locationServiceScript_M.StartLocationSystem());
                     StartCoroutine(locationServiceScript_M.DisplayDirections());
@@ -150,23 +155,28 @@ public class Scene5Manager_M : MonoBehaviour
         {
             profIds.AddRange(value);
             
+            
         });
 
-        Invoke("GetMyRecieveProfID", 5f);
+        
 
     }
 
     public void GetMyRecieveProfID()
     {
-        FirebaseManager.instance.GetAllChildKeys($"user/{UserDataManager.instance.uid}/heldProfiles", (value) =>
+        FirebaseManager.instance.GetAllChildKeys($"users/{UserDataManager.instance.uid}/heldProfiles", (value) =>
         {
+            Debug.Log(value.Length);
             foreach (string str in value)
             {
+                Debug.Log(str);
                 foreach (string profId in profIds)
                 {
+                    Debug.Log(profId);
                     if (str.Equals(profId))
                     {
                         receivedOpponentProfileID = profId;
+                        Debug.Log(receivedMyProfileID);
                     }
                 }
             }

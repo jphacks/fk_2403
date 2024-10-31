@@ -13,7 +13,7 @@ public class LoadAvatarImage : MonoBehaviour
 
     [SerializeField] Transform[] parent;
 
-    List<SpriteRenderer> costumeImgs = new List<SpriteRenderer>();
+    [SerializeField] List<SpriteRenderer> costumeImgs = new List<SpriteRenderer>();
 
     public TempAvatarStorage tempAvatarStorage = new TempAvatarStorage();
 

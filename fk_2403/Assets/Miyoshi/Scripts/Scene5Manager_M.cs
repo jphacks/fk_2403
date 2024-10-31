@@ -26,8 +26,11 @@ public class Scene5Manager_M : MonoBehaviour
     public float distance = float.MaxValue;
 
     public float threshold = /*0.0004f*/10000000000000000000;
+    string opponentId = "";
 
-    private string receivedOpponentProfileID = null;
+    [SerializeField]private string receivedOpponentProfileID = null;
+    [SerializeField]private string receivedMyProfileID = null;
+    List<string> profIds = new List<string>();
 
     // Start is called before the first frame update
     void Start()
@@ -36,6 +39,7 @@ public class Scene5Manager_M : MonoBehaviour
         instance = this;
         panel2.SetActive(false);
         allert.SetActive(false);
+        
     }
 
     // Update is called once per frame
@@ -64,7 +68,7 @@ public class Scene5Manager_M : MonoBehaviour
             if(!value.Equals("NoData"))//合言葉が存在したら.//仮置きaaa.
             {
                 //ここの時点で合言葉が一致した二人のユーザが存在することになる
-                string opponentId = "";
+                opponentId = "";
                 FirebaseManager.instance.GetAllChildKeys("ExchangeProf/"+passPhrase, (strArray) => {
                     foreach(string str in strArray){
                         if(str.Equals(UserDataManager.instance.uid)){
@@ -75,6 +79,7 @@ public class Scene5Manager_M : MonoBehaviour
                     }
 
                     Debug.Log("kakuninnyou:"+opponentId);//ココまではok
+                    GetProfID();
                     locationServiceScript_M.SetInfo(passPhrase, opponentId);
                     StartCoroutine(locationServiceScript_M.StartLocationSystem());
                     StartCoroutine(locationServiceScript_M.DisplayDirections());
@@ -111,6 +116,13 @@ public class Scene5Manager_M : MonoBehaviour
 
             */
 
+            FirebaseManager.instance.Remove($"users/{UserDataManager.instance.uid}/heldProfiles/{receivedOpponentProfileID}");
+            FirebaseManager.instance.Remove($"users/{opponentId}/heldProfiles/{receivedMyProfileID}");
+
+            FirebaseManager.instance.WriteData($"users/{UserDataManager.instance.uid}/receivedProfiles/{receivedMyProfileID}", "");
+            FirebaseManager.instance.WriteData($"users/{opponentId}/receivedProfiles/{receivedOpponentProfileID}", "");
+
+
             isReceivePanelDisplay = true;
         }
         else
@@ -130,6 +142,43 @@ public class Scene5Manager_M : MonoBehaviour
         panel2.SetActive(false);
         allert.SetActive(false);
         Debug.Log("close");
+    }
+
+    public void GetProfID()
+    {
+        FirebaseManager.instance.GetAllChildKeys($"Exchange/{passPhrase}", (value) =>
+        {
+            profIds.AddRange(value);
+            
+        });
+
+        Invoke("GetMyRecieveProfID", 5f);
+
+    }
+
+    public void GetMyRecieveProfID()
+    {
+        FirebaseManager.instance.GetAllChildKeys($"user/{UserDataManager.instance.uid}/heldProfiles", (value) =>
+        {
+            foreach (string str in value)
+            {
+                foreach (string profId in profIds)
+                {
+                    if (str.Equals(profId))
+                    {
+                        receivedOpponentProfileID = profId;
+                    }
+                }
+            }
+
+            foreach (string profId in profIds)
+            {
+                if (profIds.Equals(receivedOpponentProfileID))
+                {
+                    receivedMyProfileID = profId;
+                }
+            }
+        });
     }
 
     public void OnEndEdit(string s)

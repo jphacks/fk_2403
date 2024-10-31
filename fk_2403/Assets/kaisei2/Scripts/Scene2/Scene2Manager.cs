@@ -12,7 +12,7 @@ public class Scene2Manager : MonoBehaviour
     void Start()
     {
         loadAvatarImage = GetComponent<LoadAvatarImage>();
-        //loadAvatarImage.GetImage();
+        loadAvatarImage.GetImage();
         loadAvatarImage.CreateCostumeIcon();
 
     }

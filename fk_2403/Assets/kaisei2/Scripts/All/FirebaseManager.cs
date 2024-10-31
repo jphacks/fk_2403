@@ -245,6 +245,21 @@ public class FirebaseManager : MonoBehaviour
         });
     }
 
+    public void Remove(string path)
+    {
+        FirebaseInitializer.DatabaseReference.Child(path).RemoveValueAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompleted)
+            {
+                Debug.Log("remove complited");
+            }
+            else
+            {
+                Debug.LogError("Failed to get child keys: " + task.Exception);
+            }
+        });
+    }
+
     void OnDestroy()
     {
         FirebaseInitializer.OnFirebaseInitialized -= CheckConnection;

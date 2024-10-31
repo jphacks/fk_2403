@@ -27,6 +27,8 @@ public class Scene5Manager_M : MonoBehaviour
 
     public float threshold = /*0.0004f*/10000000000000000000;
 
+    private string receivedOpponentProfileID = null;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -98,7 +100,16 @@ public class Scene5Manager_M : MonoBehaviour
         if(distance <= threshold)
         {
             //ここで受け取り処理をする.
+
+            /*//受け取り処理よろしくお願いします！.
             //FirebaseManager.instance.WriteData();
+            FirebaseManager.instance.ReadData($"users/{UserDataManager.instance.uid}/heldProfiles/", (value) =>
+            {
+                receivedOpponentProfileID = (value);
+            });
+
+
+            */
 
             isReceivePanelDisplay = true;
         }

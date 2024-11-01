@@ -128,12 +128,17 @@ public class LocationServiceScript_M : MonoBehaviour
         {
             StartCoroutine(GetLocation());
             //ここで相手の座標を取りたい.
-            FirebaseManager.instance.ReadData($"Communication/{passPhrase}/{opponentID}/latitude", (value) => {
-                opponentLatitude = float.Parse(value);
-            });
-            FirebaseManager.instance.ReadData($"Communication/{passPhrase}/{opponentID}/longitude", (value) => {
-                opponentLongitude = float.Parse(value);
-            });
+            if (opponentID != "")
+            {
+                FirebaseManager.instance.ReadData($"Communication/{passPhrase}/{opponentID}/latitude", (value) => {
+                    if (!value.Equals("NoData")) opponentLatitude = float.Parse(value);
+                });
+                FirebaseManager.instance.ReadData($"Communication/{passPhrase}/{opponentID}/longitude", (value) => {
+                    if (!value.Equals("NoData")) opponentLongitude = float.Parse(value);
+                });
+            }
+
+            
             Vector3 targetPosition = CalculatePosition(opponentLatitude, opponentLongitude);
             Vector3 myPosition = CalculatePosition(myLatitude, myLongitude);
             //myTxt.GetComponent<Text>().text = "m:"+myLatitude+", "+myLongitude;
@@ -171,8 +176,13 @@ public class LocationServiceScript_M : MonoBehaviour
             if(maxSearchCount < 0)
             {
                 //ユーザー側が合言葉検索途中でシーンや画面を離れることは想定していない.
-                FirebaseManager.instance.WriteData($"Communication/{passPhrase}/{UserDataManager.instance.uid}/latitude", float.MaxValue.ToString());
-                FirebaseManager.instance.WriteData($"Communication/{passPhrase}/{UserDataManager.instance.uid}/longitude", float.MaxValue.ToString());
+                if (passPhrase.Equals(""))
+                {
+                    FirebaseManager.instance.WriteData($"Communication/{passPhrase}/{UserDataManager.instance.uid}/latitude", float.MaxValue.ToString());
+                    FirebaseManager.instance.WriteData($"Communication/{passPhrase}/{UserDataManager.instance.uid}/longitude", float.MaxValue.ToString());
+
+
+                }
                 Destroy(tmp);
                 Scene5Manager_M.instance.OnClickClose();
                 yield break;

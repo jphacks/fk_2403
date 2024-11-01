@@ -12,9 +12,12 @@ public class Scene7Manager : MonoBehaviour
     private FirebaseManager firebaseManager;
     [SerializeField] Text nameText;
     [SerializeField] Text nicknameText;
-    List<string> profList = new List<string>();
-    int index;
+    public List<string> profList = new List<string>();
+    int index = 0;
+    [SerializeField] GameObject[] profbaseObj;
+    [SerializeField] GameObject Avatar;
 
+    LoadAvatarImage loadAvatarImage;
     // Start is called before the first frame update
     void Start()
     {
@@ -27,6 +30,8 @@ public class Scene7Manager : MonoBehaviour
 
         // 自分のUIDを取得
         userUid = UserDataManager.instance.uid;
+        loadAvatarImage = GetComponent<LoadAvatarImage>();
+        loadAvatarImage.GetImage();
 
         // 自分のUIDの下にあるプロフIDを取得してコンソールに表示
         //FetchAndDisplayProfileIds();
@@ -118,6 +123,8 @@ public class Scene7Manager : MonoBehaviour
         FirebaseManager.instance.GetAllChildKeys($"users/{userUid}/receivedProfiles", (keys) =>
         {
             profList.AddRange(keys);
+            LoadResultProf();
+            //ReadName(profList[index]);
         });
     }
 
@@ -126,8 +133,18 @@ public class Scene7Manager : MonoBehaviour
     {
         FirebaseManager.instance.GetAllDataFromServer($"ProfInfo/{profList[index]}", (datas) =>
         {
-            nameText.text = datas["Name"].ToString();
-            nicknameText.text = datas["Nickname"].ToString();
+            //ここにプロフ情報を書き込む処理
+            foreach (GameObject obj in profbaseObj)
+            {
+                obj.SetActive(false);
+            }
+
+            string i = datas["profbase"].ToString();
+            profbaseObj[int.Parse(i)].SetActive(true);
+            profbaseObj[int.Parse(i)].transform.Find("Name").gameObject.GetComponent<Text>().text = datas["Name"].ToString();
+            profbaseObj[int.Parse(i)].transform.Find("Nickname").gameObject.GetComponent<Text>().text = datas["Nickname"].ToString();
+            loadAvatarImage.LoadCostumeDataFromFirebase(datas["oppomentId"].ToString());
+
         });
         //FirebaseManager.instance.GetAllChildKeys("ProfInfo", (keys) => {
         //    foreach(string key in keys){
@@ -151,6 +168,7 @@ public class Scene7Manager : MonoBehaviour
             }
             
         });
+
     }
 
     public void buttonclicked(int i)
@@ -158,12 +176,14 @@ public class Scene7Manager : MonoBehaviour
         index += i;
         if (index < 0)
         {
-            index = profList.Count;
+            index = profList.Count - 1;
         }
 
-        if (index > profList.Count)
+        if (index >= profList.Count)
         {
             index = 0;
         }
+
+        LoadResultProf();
     }
 }

@@ -152,6 +152,7 @@ public class Scene4Manager : MonoBehaviour
     public void OnProfButtonClicked(int value)
     {
         profIndex = value;
+        Debug.Log("profIndex:"+profIndex);
     }
 
     public void CheckBox(bool flag)

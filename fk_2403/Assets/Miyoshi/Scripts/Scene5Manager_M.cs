@@ -39,9 +39,6 @@ public class Scene5Manager_M : MonoBehaviour
         instance = this;
         panel2.SetActive(false);
         allert.SetActive(false);
-
-        passPhrase = "ちこりーた";
-        Invoke("GetProfID", 2f);
         
 
     }
@@ -68,30 +65,22 @@ public class Scene5Manager_M : MonoBehaviour
     public void OnClickSearch()
     {
         if(passPhrase == null) return;//壊れたら怖いのでチェック.挙動に問題がないなら消していい.
-        FirebaseManager.instance.ReadData("ExchangeProf/"+passPhrase, (value) => {
+        Debug.Log($"users/{UserDataManager.instance.uid}/linkedPassphrase/{passPhrase}");
+        FirebaseManager.instance.ReadData($"users/{UserDataManager.instance.uid}/linkedPassphrase/{passPhrase}", (value) => {
             if(!value.Equals("NoData"))//合言葉が存在したら.//仮置きaaa.
             {
-                //ここの時点で合言葉が一致した二人のユーザが存在することになる
-                opponentId = "";
-                FirebaseManager.instance.GetAllChildKeys("ExchangeProf/"+passPhrase, (strArray) => {
-                    foreach(string str in strArray){
-                        if(str.Equals(UserDataManager.instance.uid)){
-                            continue;
-                        }
+                //opponentIdがプロフIdになってる
+                //相手のIDがほしい
+                
+                GetProfID();
+                Invoke("GetMyRecieveProfID", 2f);
+                Invoke("GetOpponentID",4f);
 
-                        opponentId = str;
-                    }
-
-                    Debug.Log("kakuninnyou:"+opponentId);//ココまではok
-                    GetProfID();
-                    Invoke("GetMyRecieveProfID", 2f);
-                    locationServiceScript_M.SetInfo(passPhrase, opponentId);
-                    StartCoroutine(locationServiceScript_M.StartLocationSystem());
-                    StartCoroutine(locationServiceScript_M.DisplayDirections());
-                    isSeatch = true;
-                });
+                //Debug.Log("aaaaaaaaa");
 
                 
+
+
             }
             else
             {
@@ -122,9 +111,9 @@ public class Scene5Manager_M : MonoBehaviour
             */
 
             FirebaseManager.instance.Remove($"users/{UserDataManager.instance.uid}/heldProfiles/{receivedOpponentProfileID}");
-            FirebaseManager.instance.Remove($"users/{opponentId}/heldProfiles/{receivedMyProfileID}");
+            //FirebaseManager.instance.Remove($"users/{opponentId}/heldProfiles/{receivedMyProfileID}");
 
-            FirebaseManager.instance.WriteData($"users/{UserDataManager.instance.uid}/receivedProfiles/{receivedMyProfileID}", "");
+            //FirebaseManager.instance.WriteData($"users/{UserDataManager.instance.uid}/receivedProfiles/{receivedMyProfileID}", "");
             FirebaseManager.instance.WriteData($"users/{opponentId}/receivedProfiles/{receivedOpponentProfileID}", "");
 
 
@@ -151,15 +140,11 @@ public class Scene5Manager_M : MonoBehaviour
 
     public void GetProfID()
     {
-        FirebaseManager.instance.GetAllChildKeys($"Exchange/{passPhrase}", (value) =>
+        FirebaseManager.instance.GetAllChildKeys($"ExchangeProf/{passPhrase}", (value) =>
         {
             profIds.AddRange(value);
-            
-            
+            //GetMyRecieveProfID();
         });
-
-        
-
     }
 
     public void GetMyRecieveProfID()
@@ -170,24 +155,35 @@ public class Scene5Manager_M : MonoBehaviour
             foreach (string str in value)
             {
                 Debug.Log(str);
-                foreach (string profId in profIds)
+                if (str.Equals(profIds[0]))
                 {
-                    Debug.Log(profId);
-                    if (str.Equals(profId))
-                    {
-                        receivedOpponentProfileID = profId;
-                        Debug.Log(receivedMyProfileID);
-                    }
+                    receivedOpponentProfileID = profIds[0];
+                    receivedMyProfileID = profIds[1];
+                }
+                else if (str.Equals(profIds[1]))
+                {
+                    receivedOpponentProfileID = profIds[1];
+                    receivedMyProfileID = profIds[0];
                 }
             }
+            Debug.Log("receivedMyProfileID:"+receivedMyProfileID);
+            Debug.Log("receivedOpponentProfileID:"+receivedOpponentProfileID);
+            //GetOpponentID();
+            
+        });
+    }
 
-            foreach (string profId in profIds)
-            {
-                if (profIds.Equals(receivedOpponentProfileID))
-                {
-                    receivedMyProfileID = profId;
-                }
-            }
+    public void GetOpponentID()
+    {
+        FirebaseManager.instance.ReadData($"ProfInfo/{receivedOpponentProfileID}/ownerId", (value) =>
+        {
+            opponentId = value;
+            Debug.Log("opponentId:" + value);
+            locationServiceScript_M.SetInfo(passPhrase, opponentId);
+            StartCoroutine(locationServiceScript_M.StartLocationSystem());
+            StartCoroutine(locationServiceScript_M.DisplayDirections());
+            isSeatch = true;
+            
         });
     }
 

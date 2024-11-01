@@ -133,6 +133,7 @@ public class Scene7Manager : MonoBehaviour
     {
         FirebaseManager.instance.GetAllDataFromServer($"ProfInfo/{profList[index]}", (datas) =>
         {
+            Avatar.SetActive(true);
             //ここにプロフ情報を書き込む処理
             foreach (GameObject obj in profbaseObj)
             {
@@ -143,6 +144,8 @@ public class Scene7Manager : MonoBehaviour
             int index = int.Parse(i);
             GameObject tmp = profbaseObj[index];
             tmp.SetActive(true);
+            string str = datas["oppomentId"].ToString();
+            loadAvatarImage.LoadCostumeDataFromFirebase(str);
             tmp.transform.Find("Name").gameObject.GetComponent<Text>().text = datas["Name"].ToString();
             tmp.transform.Find("Nickname").gameObject.GetComponent<Text>().text = datas["Nickname"].ToString();
             tmp.transform.Find("SpecialSkils").gameObject.GetComponent<Text>().text = datas["SpecialSkils"].ToString();
@@ -150,7 +153,7 @@ public class Scene7Manager : MonoBehaviour
             tmp.transform.Find("Motto").gameObject.GetComponent<Text>().text = datas["Motto"].ToString();
             tmp.transform.Find("Myboom").gameObject.GetComponent<Text>().text = datas["Myboon"].ToString();
             tmp.transform.Find("Job").gameObject.GetComponent<Text>().text = datas["Job"].ToString();
-            loadAvatarImage.LoadCostumeDataFromFirebase(datas["oppomentId"].ToString());
+            
 
         });
         //FirebaseManager.instance.GetAllChildKeys("ProfInfo", (keys) => {

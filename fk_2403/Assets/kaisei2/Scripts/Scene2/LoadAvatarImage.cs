@@ -61,6 +61,7 @@ public class LoadAvatarImage : MonoBehaviour
     // Firebaseからコスチュームデータを読み込む
     public void LoadCostumeDataFromFirebase(string userId)
     {
+        Debug.Log("読み込むアバターはユーザID："+userId+"です。");
         // FirebaseManagerのインスタンスを取得
         FirebaseManager firebaseManager = FirebaseManager.instance;
 

@@ -79,7 +79,7 @@ public class LocationServiceScript_M : MonoBehaviour
         }
         Debug.Log("start");
         Scene5Manager_M.instance.isLocationServiceStart = true;
-        yield break;
+        yield return StartCoroutine(DisplayDirections()); ;
     }
 
     public IEnumerator GetLocation()

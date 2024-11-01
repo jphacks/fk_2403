@@ -18,6 +18,9 @@ public class Scene7Manager : MonoBehaviour
     [SerializeField] GameObject Avatar;
 
     LoadAvatarImage loadAvatarImage;
+
+    GameObject tmp = null;
+    Dictionary<string, object> dic = new Dictionary<string, object>();
     // Start is called before the first frame update
     void Start()
     {
@@ -131,6 +134,7 @@ public class Scene7Manager : MonoBehaviour
 
     public void LoadResultProf()
     {
+        
         FirebaseManager.instance.GetAllDataFromServer($"ProfInfo/{profList[index]}", (datas) =>
         {
             Avatar.SetActive(true);
@@ -139,30 +143,28 @@ public class Scene7Manager : MonoBehaviour
             {
                 obj.SetActive(false);
             }
-
             string i = datas["profbase"].ToString();
             int index = int.Parse(i);
-            GameObject tmp = profbaseObj[index];
+            tmp = profbaseObj[index];
             tmp.SetActive(true);
-            string str = datas["oppomentId"].ToString();
-            loadAvatarImage.LoadCostumeDataFromFirebase(str);
-            tmp.transform.Find("Name").gameObject.GetComponent<Text>().text = datas["Name"].ToString();
-            tmp.transform.Find("Nickname").gameObject.GetComponent<Text>().text = datas["Nickname"].ToString();
-            tmp.transform.Find("SpecialSkils").gameObject.GetComponent<Text>().text = datas["SpecialSkils"].ToString();
-            tmp.transform.Find("Hobby").gameObject.GetComponent<Text>().text = datas["Hobby"].ToString();
-            tmp.transform.Find("Motto").gameObject.GetComponent<Text>().text = datas["Motto"].ToString();
-            tmp.transform.Find("Myboom").gameObject.GetComponent<Text>().text = datas["Myboon"].ToString();
-            tmp.transform.Find("Job").gameObject.GetComponent<Text>().text = datas["Job"].ToString();
-            
-
+            dic = datas;
+            ShowResultProf();
         });
-        //FirebaseManager.instance.GetAllChildKeys("ProfInfo", (keys) => {
-        //    foreach(string key in keys){
-        //        Debug.Log(key);
-        //        //読み込み
-        //        ReadName(key);
-        //    }
-        //});
+        //Invoke("ShowResultProf", 1f);
+    }
+
+    void ShowResultProf() 
+    {
+        
+        string str = dic["oppomentId"].ToString();
+        loadAvatarImage.LoadCostumeDataFromFirebase(str);
+        tmp.transform.Find("Name").gameObject.GetComponent<Text>().text = dic["Name"].ToString();
+        tmp.transform.Find("Nickname").gameObject.GetComponent<Text>().text = dic["Nickname"].ToString();
+        tmp.transform.Find("SpecialSkils").gameObject.GetComponent<Text>().text = dic["SpecialSkils"].ToString();
+        tmp.transform.Find("Hobby").gameObject.GetComponent<Text>().text = dic["Hobby"].ToString();
+        tmp.transform.Find("Motto").gameObject.GetComponent<Text>().text = dic["Motto"].ToString();
+        tmp.transform.Find("Myboom").gameObject.GetComponent<Text>().text = dic["Myboom"].ToString();
+        tmp.transform.Find("Job").gameObject.GetComponent<Text>().text = dic["Job"].ToString();
     }
 
     void ReadName(string key){

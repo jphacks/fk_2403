@@ -1766,7 +1766,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1262033619354092948, guid: d43c6d342f9cd495280285ea41165642, type: 3}
       propertyPath: uid
-      value: bqYzqCyrxsU002kP0UAUPJ2wQl62
+      value: L6utX401hlP0LlpqKOpt5v1N3UC3
       objectReference: {fileID: 0}
     - target: {fileID: 3161041321887358776, guid: d43c6d342f9cd495280285ea41165642, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2819,8 +2819,18 @@ MonoBehaviour:
   - 
   userUid: "\u81EA\u5206\u306EUID"
   writepanel: {fileID: 274488965}
+  sprites:
+  - {fileID: 21300000, guid: 0273db102390942b9b0d80c8c94d5f52, type: 3}
+  - {fileID: 21300000, guid: 32704dbe2d8224ababc3825276682b43, type: 3}
+  - {fileID: 21300000, guid: a0025467634734cfcbe2542e6d0a34f4, type: 3}
+  profbase: {fileID: 218278609}
   nameinput: {fileID: 196098911}
   Nickname: {fileID: 197050917}
+  SpecialSkils: {fileID: 1326472416}
+  Hobby: {fileID: 1005462617}
+  Motto: {fileID: 56471397}
+  Myboom: {fileID: 1806730598}
+  Job: {fileID: 1636281081}
   parent: {fileID: 2142690428}
   userIconPrefab: {fileID: 2630030580246844354, guid: 2042aa16a20f14dfa97fb56fa96fc255, type: 3}
 --- !u!4 &1347327128

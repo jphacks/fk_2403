@@ -16,8 +16,15 @@ public class Scene8Manager : MonoBehaviour
     [SerializeField] GameObject writepanel;
 
     // 保存するデータ
+    [SerializeField] Sprite[] sprites;
+    [SerializeField] Image profbase;
     [SerializeField] InputField nameinput;
     [SerializeField] InputField Nickname;
+    [SerializeField] InputField SpecialSkils;
+    [SerializeField] InputField Hobby;
+    [SerializeField] InputField Motto;
+    [SerializeField] InputField Myboom;
+    [SerializeField] InputField Job;
 
     [SerializeField] Transform parent;
     [SerializeField] GameObject userIconPrefab;
@@ -187,10 +194,22 @@ public class Scene8Manager : MonoBehaviour
         if (index != -1)
         {
             Debug.Log(index);
-            nameinput.text = dicList[index]["Name"].ToString();
-            Nickname.text = dicList[index]["Nickname"].ToString();
+            string i = dicList[index]["profbase"].ToString();
+            profbase.sprite = sprites[int.Parse(i)];
+
+            if (dicList[index].ContainsKey("Name"))
+            {
+                nameinput.text = dicList[index]["Name"].ToString();
+                Nickname.text = dicList[index]["Nickname"].ToString();
+                SpecialSkils.text = dicList[index]["SpecialSkils"].ToString();
+                Hobby.text = dicList[index]["Hobby"].ToString();
+                Motto.text = dicList[index]["Motto"].ToString();
+                Myboom.text = dicList[index]["Myboom"].ToString();
+                Job.text = dicList[index]["Job"].ToString();
+            }
+            
+
         }
-        
     }
 
     public void onClicked_savebutton()
@@ -221,5 +240,10 @@ public class Scene8Manager : MonoBehaviour
         // FirebaseManager経由でデータを保存
         firebaseManager.WriteData($"ProfInfo/{profId}/Name", name);
         firebaseManager.WriteData($"ProfInfo/{profId}/Nickname", nickname);
+        firebaseManager.WriteData($"ProfInfo/{profId}/SpecialSkils", SpecialSkils.text);
+        firebaseManager.WriteData($"ProfInfo/{profId}/Hobby", Hobby.text);
+        firebaseManager.WriteData($"ProfInfo/{profId}/Motto", Motto.text);
+        firebaseManager.WriteData($"ProfInfo/{profId}/Myboom", Myboom.text);
+        firebaseManager.WriteData($"ProfInfo/{profId}/Job", Job.text);
     }
 }

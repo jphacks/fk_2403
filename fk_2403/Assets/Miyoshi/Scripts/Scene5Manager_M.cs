@@ -23,9 +23,9 @@ public class Scene5Manager_M : MonoBehaviour
 
     private string passPhrase = null;
 
-    public float distance = float.MaxValue;
+    public double distance = double.MaxValue;
 
-    public float threshold = /*0.0004f*/10000000000000000000;
+    public float threshold = 200/*0.0004f*/;
     string opponentId = "";
 
     [SerializeField]private string receivedOpponentProfileID = null;

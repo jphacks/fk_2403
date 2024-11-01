@@ -181,8 +181,9 @@ public class Scene5Manager_M : MonoBehaviour
             Debug.Log("opponentId:" + value);
             locationServiceScript_M.SetInfo(passPhrase, opponentId);
             StartCoroutine(locationServiceScript_M.StartLocationSystem());
-            StartCoroutine(locationServiceScript_M.DisplayDirections());
             isSeatch = true;
+            //StartCoroutine(locationServiceScript_M.DisplayDirections());
+            
             
         });
     }

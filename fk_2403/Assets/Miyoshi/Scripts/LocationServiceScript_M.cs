@@ -21,7 +21,7 @@ public class LocationServiceScript_M : MonoBehaviour
     [SerializeField] Text distanceTxt;
     //
 
-    private const bool _debug = true;
+    private const bool _debug = false;
 
     private float myLatitude;
     private float myLongitude;
@@ -34,7 +34,7 @@ public class LocationServiceScript_M : MonoBehaviour
     private int maxSearchCount = 30;
 
     //位置情報から2点間の距離を求めるため,Geodesicを使います,(楕円体の赤道半径:6378137. 楕円体の扁平率:1 / 298.257222101)
-    Geodesic geodesic = new Geodesic(6378137, 1 / 298.257222101);
+    Geodesic geodesic = new Geodesic(6378137d, 1d / 298.257222101d);
 
     private bool isApplicationPause = false;
 
@@ -139,11 +139,12 @@ public class LocationServiceScript_M : MonoBehaviour
             //myTxt.GetComponent<Text>().text = "m:"+myLatitude+", "+myLongitude;
             //opoTxt.GetComponent<Text>().text = "o:"+opponentLatitude+", "+opponentLongitude;
             //Debug.Log(Mathf.Sqrt((targetPosition.x-myPosition.x)*(targetPosition.x-myPosition.x)+(targetPosition.y-myPosition.y)*(targetPosition.y-myPosition.y)));
-            Scene5Manager_M.instance.distance = Mathf.Sqrt((targetPosition.x-myPosition.x)*(targetPosition.x-myPosition.x)+(targetPosition.y-myPosition.y)*(targetPosition.y-myPosition.y));
+            //Scene5Manager_M.instance.distance = Mathf.Sqrt((targetPosition.x-myPosition.x)*(targetPosition.x-myPosition.x)+(targetPosition.y-myPosition.y)*(targetPosition.y-myPosition.y));
 
             GeodesicData gDistance = geodesic.Inverse(myLatitude, myLongitude, opponentLatitude, opponentLongitude);
             Debug.Log(gDistance.Distance);
             distanceTxt.GetComponent<Text>().text = "distance:" + gDistance.Distance + " m";
+            Scene5Manager_M.instance.distance = gDistance.Distance;
 
             //disTxt.GetComponent<Text>().text = "d:"+Scene5Manager_M.instance.distance;
             Vector3 distance = (targetPosition - myPosition).normalized;
